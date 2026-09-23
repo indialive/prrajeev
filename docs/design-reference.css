@@ -1,0 +1,894 @@
+@layer tokens, reset, global, layouts, components, utilities;
+
+/* ROOT TOKENS */
+
+@layer tokens {
+:root {
+
+/* COLOR PALETTE */
+
+  --primary:                oklch(48.4%  0.075 191.5);
+  --primary-ultra-dark:     oklch(18%    0.045 191.5);
+  --primary-dark:           oklch(29%    0.062 191.5);
+  --primary-semi-dark:      oklch(38%    0.070 191.5);
+  --primary-semi-light:     oklch(62%    0.065 191.5);
+  --primary-light:          oklch(78%    0.042 191.5);
+  --primary-ultra-light:    oklch(95%    0.018 191.5);
+  --primary-hover:          oklch(42%    0.074 191.5);
+  --primary-active:         oklch(34%    0.068 191.5);
+
+  --secondary:              oklch(64.36% 0.1593 47.16);
+  --secondary-ultra-dark:   oklch(30%    0.090  43);
+  --secondary-dark:         oklch(48%    0.140  45);
+  --secondary-semi-dark:    oklch(58%    0.155  46);
+  --secondary-hover:        oklch(60%    0.160  46);
+  --secondary-active:       oklch(54%    0.150  45);
+  --secondary-semi-light:   oklch(80%    0.115  53);
+  --secondary-light:        oklch(91%    0.065  58);
+  --secondary-ultra-light:  oklch(97%    0.020  60);
+  /* Page canvas tint — DECOUPLED from --secondary (hue 95, not the marigold family). */
+  --secondary-page-bg:      oklch(0.985  0.006  95);
+
+  /* Neutrals · warm-paper · hue 60 · c≤0.004 — reads neutral but avoids a
+     green tint at low lightness (a hue-195 risk) and keeps brand warmth. */
+  --white:                  oklch(100%  0      0);
+  --off-white:              oklch(97.5% 0.003 60);
+  --neutral-ultra-light:    oklch(95%   0.003 60);
+  --neutral-light:          oklch(90%   0.004 60);
+  --neutral-semi-light:     oklch(82%   0.004 60);
+  --neutral-mid:            oklch(66%   0.004 60);
+  --neutral-dark:           oklch(27%   0.005 60);
+  --neutral-ultra-dark:     oklch(20%   0.005 60);
+  --black:                  oklch(12%   0.005 60);
+
+/* SEMANTIC TOKENS */
+
+  /* Text — lightness floors tuned for WCAG AA (4.5:1 on near-white).
+     Re-verify contrast against --surface-raised / --card-bg if changed. */
+  --text-main:              var(--black);
+  --text-body:              var(--neutral-dark);
+  --text-muted:             oklch(40%   0.005 220);
+  --text-subtle:            oklch(50%   0.004 235);
+  --text-on-primary:        var(--white);
+  --text-on-secondary:      var(--white);
+  --text-on-dark:           var(--white);
+  --text-link:              var(--primary);
+  --text-link-hover:        var(--primary-hover);
+  --text-link-visited:      var(--primary-semi-dark);
+  --text-accent:            var(--primary);
+
+  /* Component accent */
+  --icon-color:             var(--primary);
+  --card-accent:            var(--primary);
+  --card-accent-strip:      3px solid var(--primary);
+
+  /* Brand gradient · oklch interpolation to avoid muddy mid-blend */
+  --brand-gradient:         linear-gradient(in oklch to right,
+                              var(--primary) 0%,
+                              var(--primary) 40%,
+                              var(--secondary) 70%,
+                              var(--secondary) 100%);
+  --brand-gradient-vertical:linear-gradient(in oklch to bottom,
+                              var(--primary) 0%,
+                              var(--primary) 40%,
+                              var(--secondary) 70%,
+                              var(--secondary) 100%);
+  /* Dark-surface gradient — homepage Pioneer section + deep-teal backdrops. */
+  --gradient-pioneer:       linear-gradient(155deg,
+                              var(--primary-ultra-dark)  0%,
+                              var(--primary-dark)       55%,
+                              var(--primary)            100%);
+  --card-gradient-strip-height: 5px;
+
+  /* Surfaces */
+  --body-bg:                var(--white);
+  /* Pure white so cards pop against the warm-cream canvas; theme overrides recolour. */
+  --surface-raised:         var(--white);
+  --surface-sunken:         var(--neutral-ultra-light);
+  --surface-tinted:         oklch(97%   0.015 191.5);
+  --surface-primary:        var(--primary);
+  --surface-dark:           var(--black);
+  --surface-highlight:      var(--primary-ultra-light);
+  --surface-brand-tint:     linear-gradient(135deg,
+                              var(--primary-ultra-light) 0%,
+                              var(--secondary-ultra-light) 100%);
+
+  /* Borders */
+  --border-subtle:          var(--neutral-ultra-light);
+  --border-muted:           oklch(92%   0.004 250);
+  --border-default:         var(--neutral-light);
+  --border-strong:          var(--neutral-semi-light);
+  --border-focus:           var(--primary);
+  --border-accent:          var(--primary-semi-light);
+  --border-secondary:       oklch(82%   0.090 55);
+
+  /* Glass overlays */
+  --overlay-glass-subtle:   oklch(100% 0 0 / 10%);
+  --overlay-glass-medium:   oklch(100% 0 0 / 15%);
+  --text-on-dark-muted:     oklch(100% 0 0 / 85%);
+  --text-on-dark-secondary: oklch(100% 0 0 / 80%);
+  --text-on-dark-tertiary:  oklch(100% 0 0 / 67%);
+  --text-on-dark-subtle:    oklch(100% 0 0 / 55%);
+
+  /* Feedback */
+  --feedback-success:       oklch(44%   0.155 150);
+  --feedback-success-light: oklch(94%   0.032 150);
+  --feedback-success-dark:  oklch(28%   0.120 150);
+
+  --feedback-warning:       oklch(46%   0.135  72);
+  --feedback-warning-light: oklch(95%   0.032  72);
+  --feedback-warning-dark:  oklch(30%   0.100  72);
+
+  --feedback-error:         oklch(46%   0.175  25);
+  --feedback-error-light:   oklch(94%   0.032  25);
+  --feedback-error-dark:    oklch(28%   0.140  25);
+
+  --feedback-info:          oklch(44%   0.095 210);
+  --feedback-info-light:    oklch(94%   0.022 210);
+  --feedback-info-dark:     oklch(28%   0.070 210);
+
+  /* Third-party brand colours. Deliberately outside the palette: a LinkedIn
+     surface is only legible as LinkedIn in LinkedIn's own blue. Use nowhere
+     except a surface that IS that platform. */
+  --brand-linkedin:         #0A66C2;
+  --brand-linkedin-navy:    #0A2A5E;
+  --brand-linkedin-gradient: linear-gradient(170deg,
+                              var(--brand-linkedin-navy) 0%,
+                              var(--brand-linkedin) 100%);
+
+/* OVERLAYS */
+
+  --overlay-heavy:          oklch(12% 0.014 200 / 80%);
+  --overlay-dark:           oklch(12% 0.014 200 / 65%);
+  --overlay-medium:         oklch(12% 0.014 200 / 45%);
+  --overlay-light:          oklch(12% 0.014 200 / 20%);
+
+  /* Hero photo scrim — legibility wash over editor-uploaded banner images
+     (page-banner.php). Darkens BOTH ends of the frame and lets the middle
+     of the photo breathe:
+       • bottom band  → carries the white title / breadcrumb / eyebrow
+       • top band     → the transparent site-header overlaps here; this stop
+                         guarantees the white nav text + white logo clear WCAG
+                         contrast over ANY image, however bright.
+     Tuned from --primary-ultra-dark so the wash stays in the brand teal family
+     rather than a flat grey. Percentages are viewport-agnostic (scrim scales
+     with the hero), so no per-breakpoint tuning is needed. */
+  /* Copy occupies the bottom half of every banner, and a two-line title reaches
+     the 48% mark — where this ramp used to thin to 18% and lose white type over
+     a bright photo. The lower four stops are deepened for that; the 84–100%
+     pair is untouched since it only guards the transparent-header overlap. */
+  --scrim-hero:
+    linear-gradient(
+      to top,
+      color-mix(in oklch, var(--primary-ultra-dark) 86%, transparent)   0%,
+      color-mix(in oklch, var(--primary-ultra-dark) 64%, transparent)  26%,
+      color-mix(in oklch, var(--primary-ultra-dark) 34%, transparent)  48%,
+      color-mix(in oklch, var(--primary-ultra-dark) 16%, transparent)  62%,
+      color-mix(in oklch, var(--primary-ultra-dark) 40%, transparent)  84%,
+      color-mix(in oklch, var(--primary-ultra-dark) 78%, transparent) 100%
+    );
+  /* Lateral companion — a soft left-edge wash so left-aligned hero copy holds
+     against a busy right side of the photo. Layered under --scrim-hero. */
+  --scrim-hero-lateral:
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--primary-ultra-dark) 30%, transparent)  0%,
+      color-mix(in oklch, var(--primary-ultra-dark) 12%, transparent) 35%,
+      transparent                                                      55%
+    );
+  /* Backdrop-filter scale — pair with a translucent background. */
+  --backdrop-blur-soft:     blur(2px);
+  --backdrop-blur:          blur(12px);
+  /* Saturation boost paired with --backdrop-blur for the frosted-glass look. */
+
+  --opacity-disabled:       0.45;
+  --opacity-moderate:       0.6;
+  --opacity-subdued:        0.7;
+  --opacity-strong:         0.88;
+  --opacity-icon-muted:     0.8;
+
+  /* Icons · sized relative to surrounding text (icon = text × 1.1) */
+
+  /* Inline — fixed rem, locked to text context */
+  --icon-inline-xs:         0.75rem;
+  --icon-inline-s:          0.875rem;
+  --icon-inline-m:          1rem;
+  --icon-inline-l:          1.125rem;
+  --icon-inline-xl:         1.25rem;
+
+  /* Standalone UI — fluid */
+  --icon-ui-s:              clamp(1.25rem,  1.2143rem + 0.1116vw, 1.5rem);
+  --icon-ui-m:              clamp(1.5rem,   1.4286rem + 0.2232vw, 2rem);
+  --icon-ui-l:              clamp(1.75rem,  1.6071rem + 0.4464vw, 2.5rem);
+  --icon-ui-xl:             clamp(2rem,     1.7857rem + 0.6696vw, 3rem);
+
+  /* Icon chip framework — wrapper font-size is the knob;
+     box = 1em × --icon-chip-ratio, svg = 1em × 1em */
+  --icon-chip-ratio:        2.2;
+  --icon-chip-size-s:       1rem;
+  --icon-chip-size-m:       1.25rem;
+  --icon-chip-size-l:       1.5rem;
+  --icon-chip-radius:       var(--radius-s);
+  --icon-stroke:            var(--icon-stroke-default);
+
+  /* Min tap target — WCAG 2.5.5 AAA (44×44) */
+  --tap-target-min:         2.75rem;
+
+  /* Icon stroke — lighter stroke in heavier text context, vice versa */
+  --icon-stroke-default:    2;
+
+/* TYPOGRAPHY */
+
+  --font-heading:           'Hanken Grotesk', 'Hanken Grotesk Fallback', 'Arial Nova', Arial, sans-serif;
+  --font-body:              'DM Sans', 'DM Sans Fallback', 'Arial Nova', Arial, sans-serif;
+  --font-mono:              'Courier New', 'Courier', monospace;
+
+  /* Text scale — overlines/labels fixed; meta/base/body/lead fluid.
+     10 · 13 · 14→15 · 15→16 · 16→18 · 18→21. */
+
+  /* Overlines, tags, labels — fixed (must not scale). */
+  --text-2xs:               0.625rem;             /* 10px — overline / micro-label (caps) */
+  --text-xs:                0.8125rem;            /* 13px — label / caption */
+  /* Meta / secondary UI — lightly fluid to keep pace with body; never collides with --text-base. */
+  --text-s:                 clamp(0.875rem, 0.853rem + 0.094vw, 0.9375rem); /* 14→15 */
+  /* Compact body / UI default — buttons, card body, table cells. --text-m owns the fluid reading body. */
+  --text-base:              clamp(0.9375rem, 0.9155rem + 0.0939vw, 1rem); /* 15→16 */
+
+  /* Fluid body — no --text-xl, anything bigger is a heading. */
+  --text-m:                 clamp(1.0rem, 0.9560rem + 0.188vw, 1.125rem); /* 16→18 */
+  /* Lead/standfirst — locked to ~1.17 above body so the step holds across viewports. */
+  --text-l:                 clamp(1.125rem, 1.0590rem + 0.282vw, 1.3125rem); /* 18→21 */
+
+  /* Fluid heading ramp — COSMETIC sizes, h1 = largest → h6 = smallest, decoupled
+     from HTML heading levels. Pick the size that fits; one-off bumps via calc(var(--h1) * 1.1).
+     Utopia dual-ratio: 1.2 mobile → 1.25 desktop, hero-anchored (52) and floored at body. */
+  --h1:                     clamp(2.125rem,  1.7289rem + 1.6901vw, 3.25rem);   /* 34→52 */
+  --h2:                     clamp(1.75rem,   1.4639rem + 1.2207vw, 2.5625rem); /* 28→41 */
+  --h3:                     clamp(1.5rem,    1.3019rem + 0.8451vw, 2.0625rem); /* 24→33 */
+  --h4:                     clamp(1.25rem,   1.1180rem + 0.5634vw, 1.625rem);  /* 20→26 */
+  --h5:                     clamp(1.125rem,  1.0590rem + 0.2817vw, 1.3125rem); /* 18→21 */
+  --h6:                     clamp(1.0rem,    0.9560rem + 0.1878vw, 1.125rem);  /* 16→18 */
+
+  --text-lead:              var(--text-l);
+  --text-meta:              var(--text-s);
+
+  /* Pharma roles */
+  --text-overline:          var(--text-2xs);
+  --text-label:             var(--text-xs);
+  --text-data-large:        var(--h4);
+  --text-data-unit:         var(--text-s);
+
+  /* Leading — pairs INVERSELY with size: bigger type, tighter leading.
+     --hero → h1/display · --display → h2/h3 · --tight → mid headings ·
+     --body → default prose · --relaxed → long-form reading columns. */
+  --leading-none:           1;
+  --leading-compressed:     0.8;
+  --leading-hero:           1.05;
+  --leading-display:        1.1;
+  --leading-tight:          1.2;
+  --leading-snug:           1.35;
+  --leading-normal:         1.5;
+  --leading-body:           1.6;
+  --leading-relaxed:        1.65;
+  --leading-loose:          1.8;
+
+  /* Weight */
+  --weight-regular:         400;
+  --weight-medium:          500;
+  --weight-semibold:        600;
+  --weight-bold:            700;
+
+  /* Tracking */
+  --tracking-tight:         -0.01em;
+  --tracking-normal:         0em;
+  --tracking-snug:           0.02em;
+  --tracking-wide:           0.025em;
+  --tracking-subtle:         0.05em;
+  --tracking-label:          0.06em;
+  --tracking-caps:           0.08em;
+  --tracking-wide-caps:      0.1em;
+  --tracking-overline:       0.15em;
+
+/* SPACING  ·  8pt Grid */
+
+  --space-3xs:              clamp(0.125rem, 0.0893rem + 0.0112vw, 0.25rem);
+  --space-2xs:              clamp(0.25rem, 0.1786rem + 0.0223vw, 0.5rem);
+  --space-xs:               clamp(0.5rem, 0.4286rem + 0.0223vw, 0.75rem);
+  --space-s:                clamp(0.75rem, 0.6786rem + 0.0223vw, 1.0rem);
+  --space-m:                clamp(1.0rem, 0.8571rem + 0.0446vw, 1.5rem);
+  --space-l:                clamp(1.5rem, 1.2857rem + 0.0670vw, 2.25rem);
+  --space-xl:               clamp(2.0rem, 1.6429rem + 0.1116vw, 3.25rem);
+  --space-2xl:              clamp(3.0rem, 2.4286rem + 0.1786vw, 5.0rem);
+  --space-3xl:              clamp(4.0rem, 3.1429rem + 0.2679vw, 7.0rem);
+
+/* SECTION SPACING */
+
+  --section-space-xs:       clamp(2.0rem, 1.7143rem + 0.0893vw, 3.0rem);
+  --section-space-s:        clamp(2.5rem, 2.0714rem + 0.1339vw, 4.0rem);
+  --section-space-m:        clamp(3.5rem, 2.9286rem + 0.1786vw, 5.5rem);
+  --section-space-l:        clamp(4.5rem, 3.6429rem + 0.2679vw, 7.5rem);
+  --section-space-xl:       clamp(6.0rem, 4.8571rem + 0.3571vw, 10.0rem);
+  --section-space-2xl:      clamp(8.0rem, 6.2857rem + 0.5357vw, 14.0rem);
+
+  /* Mobile/tablet baseline gutter — laptop+ widens via the media query below. */
+  --gutter:                 clamp(1.5rem, 1.0714rem + 0.1339vw, 2.5rem);
+
+/* LAYOUT */
+
+  --max-viewport-width:     250rem; /* 4000px — covers 4K/5K/XDR displays */
+  --content-width:          80rem;   /* 1280px — sits inside 1366/1440 screens so the gutter always has room */
+  --content-width-compact:  70rem;   /* between narrow + default — doc lists, focused content columns */
+  --content-width-narrow:   56.25rem;
+  --content-width-wide:     100rem;
+  /* Compact editorial single — the reading measure and the media band that
+     breaks out of it. Paired: the breakout is what keeps a one-column page
+     from reading as a single unbroken ribbon. */
+  --content-width-measure:  48rem;   /* 768px */
+  --content-width-breakout: 65rem;   /* 1040px */
+
+  /* Text width — max line length for readable prose (not layout containers).
+     ch scales with font size; Baymard optimal body text: 50–75ch. */
+  --text-width-xs:          40ch;   /* tight: labels, contact intro, narrow captions */
+  --text-width-s:           52ch;   /* short descriptions, hero sub, CTA subheadings */
+  --text-width-m:           65ch;   /* section descriptions, feature body text */
+  --text-width-l:           72ch;   /* long-form prose, blog body, careers/legal text */
+
+/* CONTEXTUAL GAPS */
+
+  --container-gap:          var(--space-l);
+  --content-gap:            var(--space-m);
+  --content-gap-wide:       var(--space-l);       /* between wider content groups — featured row splits */
+  --grid-gap:               var(--space-m);
+  --stack-gap:              var(--space-s);
+  --cluster-gap:            var(--space-xs);
+  /* Between blocks in a single-column editorial flow — article → media band →
+     form → footer. Wider than --container-gap: with no sidebar to signal where
+     one block ends, the gap is doing that work alone. */
+  --editorial-flow-gap:     var(--space-2xl);
+
+  /* Hover lift — micro translate used by cards, arrows, chips. */
+  --hover-lift:             calc(var(--space-3xs) * -1);   /* ≈ -3px — subtle lift on hover */
+
+  --heading-banner:         var(--h2); /* page-level banner H1 — one step below the homepage hero (--h1) */
+  --icon-indicator-size:    0.5rem;
+  --page-meta-pill-padding: var(--space-2xs) var(--space-xs);
+
+  --header-height:          3.75rem; /* mobile 60px — desktop overrides to 5rem/80px via nav.css @media (min-width: 64em) */
+  --header-search-width:    clamp(9rem, 6rem + 6vw, 13.5rem);
+  --announce-bar-height:    0px; /* body.has-announce-bar raises to 2.75rem (announcement-bar.css); clearances add it unconditionally */
+  --sidebar-width:          18rem;
+
+/* BUTTONS */
+
+  --btn-padding-block:      0.75em;
+  --btn-padding-inline:     1.5em;
+  --btn-font-size:          var(--text-m);
+  --btn-font-weight:        var(--weight-semibold);
+  --btn-line-height:        var(--leading-none);
+  --btn-radius:             var(--radius-m);
+  --btn-icon-gap:           0.5em;
+  --btn-transition:         var(--duration-normal) var(--ease-default);
+  --btn-min-inline-size:    2.75rem;
+  --btn-focus-ring:         var(--focus-ring);
+  --btn-focus-offset:       var(--focus-ring-offset);
+
+  --btn-s-padding-block:    0.5em;
+  --btn-s-padding-inline:   1.125em;
+  --btn-s-font-size:        var(--text-s);
+
+  --btn-l-padding-block:    0.875em;
+  --btn-l-padding-inline:   1.75em;
+  --btn-l-font-size:        var(--text-l);
+
+  --btn-primary-text:       var(--text-on-primary);
+  --btn-primary-bg-active:  var(--primary-active);
+  /* Subtle 180° gradient — dimensionality without "shiny." */
+  --btn-primary-gradient:        linear-gradient(180deg, var(--primary) 0%, var(--primary-hover) 100%);
+  --btn-primary-gradient-hover:  linear-gradient(180deg, var(--primary-hover) 0%, var(--primary-active) 100%);
+
+  --btn-secondary-gradient:        linear-gradient(180deg, var(--secondary) 0%, var(--secondary-active) 100%);
+  --btn-secondary-gradient-hover:  linear-gradient(180deg, var(--secondary-hover) 0%, var(--secondary-active) 100%);
+
+  --btn-secondary-bg:       var(--secondary);
+  --btn-secondary-text:     var(--text-on-secondary);
+  /* Border matches bg — solid fill, no contrasting ring. */
+  --btn-secondary-border:   var(--btn-secondary-bg);
+  --btn-secondary-bg-hover: var(--secondary-hover);
+  --btn-secondary-bg-active:var(--secondary-active);
+
+  /* Top-edge specular highlight — inset shadow on solid-fill buttons. */
+  --btn-inset-highlight:         inset 0 1px 0 oklch(100% 0 0 / 18%);
+  --btn-inset-highlight-hover:   inset 0 1px 0 oklch(100% 0 0 / 14%);
+
+  /* Layered shadow for elevated solid-fill buttons — tinted color-mix picks up the button hue. */
+  --btn-shadow-primary:        0 1px 2px color-mix(in oklch, var(--primary) 20%, transparent),
+                               0 4px 12px color-mix(in oklch, var(--primary) 18%, transparent);
+  --btn-shadow-primary-hover:  0 4px 16px color-mix(in oklch, var(--primary) 30%, transparent);
+  --btn-shadow-secondary:      0 1px 2px color-mix(in oklch, var(--secondary) 25%, transparent),
+                               0 6px 16px color-mix(in oklch, var(--secondary) 28%, transparent);
+  --btn-shadow-secondary-hover:0 6px 20px color-mix(in oklch, var(--secondary) 36%, transparent);
+
+  /* Primary ultra-light chip — for dark-teal surfaces where --primary would vanish. */
+  --btn-primary-ultra-light-bg:        var(--primary-ultra-light);
+  --btn-primary-ultra-light-text:      var(--primary);
+  --btn-primary-ultra-light-border:    var(--btn-primary-ultra-light-bg);
+  --btn-primary-ultra-light-bg-hover:  var(--white);
+  --btn-primary-ultra-light-bg-active: var(--primary-light);
+
+  /* Secondary ultra-light chip — warm alternate, pairs with the primary chip on dark surfaces. */
+  --btn-secondary-ultra-light-bg:        var(--secondary-ultra-light);
+  --btn-secondary-ultra-light-text:      var(--primary);
+  --btn-secondary-ultra-light-border:    var(--btn-secondary-ultra-light-bg);
+  --btn-secondary-ultra-light-bg-hover:  var(--white);
+  --btn-secondary-ultra-light-bg-active: var(--secondary-light);
+
+  --btn-outline-border:     var(--primary);
+  --btn-outline-text:       var(--primary);
+  --btn-outline-bg-hover:   var(--primary);
+  --btn-outline-text-hover: var(--text-on-primary);
+
+  --btn-ghost-text:         var(--primary);
+  --btn-ghost-bg-hover:     color-mix(in oklch, var(--primary) 8%, transparent);
+  --btn-ghost-light-text:   var(--white);
+  --btn-ghost-light-bg-hover: color-mix(in oklch, var(--white) 14%, transparent);
+
+  --btn-danger-bg:          var(--feedback-error);
+  --btn-danger-text:        var(--white);
+  --btn-danger-bg-hover:    var(--feedback-error-dark);
+  --btn-danger-bg-active:   oklch(from var(--feedback-error-dark) calc(l - 0.06) c h);
+
+  --btn-neutral-light-bg:        var(--white);
+  --btn-neutral-light-bg-hover:  var(--neutral-ultra-light);
+
+  --btn-neutral-dark-bg:         var(--black);
+  --btn-neutral-dark-text:       var(--text-on-dark);
+  --btn-neutral-dark-bg-hover:   var(--neutral-ultra-dark);
+
+/* CARDS */
+
+  /* Surface, spacing, shape */
+  --card-padding:           var(--space-m);       /* modern tight default */
+  --card-padding-compact:   var(--space-s);
+  --card-padding-spacious:  var(--space-l);
+  --card-gap:               var(--space-m);       /* section-level rhythm — header ↔ text ↔ cta */
+  --card-gap-header:        var(--space-xs);      /* eyebrow ↔ title — tight grouping */
+  --card-gap-meta:          var(--space-2xs);     /* meta rows — author ↔ date ↔ tag */
+  --card-bg:                var(--surface-raised);
+  --card-border:            1px solid var(--border-subtle);
+  --card-radius:            var(--radius-m);
+  --card-min-radius:        var(--radius-xs);       /* floor for inner element radius (concentric math) */
+  --card-shadow:            var(--shadow-s);
+  --card-shadow-hover:      var(--shadow-m);
+  --card-transition:        var(--duration-fast) var(--ease-default);
+
+  /* Shallower hover lifts for non-card surfaces (nav links, quick cards).
+     Cards use --hover-lift above; these two are deliberately smaller. */
+  --lift-subtle:            -1px;
+  --lift-default:           -2px;
+
+  /* Typography */
+  --card-title-size:        var(--text-l);
+  --card-text-size:         var(--text-m);
+  --card-heading-color:     var(--text-main);
+  --card-text-color:        var(--text-body);
+  --card-meta-color:        var(--text-muted);
+  --card-eyebrow-color:     var(--text-muted);
+  --card-link-color:        var(--text-link);
+  --card-link-color-hover:  var(--text-link-hover);
+
+  /* Media */
+  --card-media-aspect-ratio: var(--ratio-card);
+  --card-icon-size:         var(--space-2xl);
+
+  /* Document covers (brochures / white papers) — the artwork is a page, not a
+     photo, so it's contained rather than cropped. These back the letterbox
+     gaps that containing necessarily leaves. */
+  /* Real covers are first-page exports, not A4 pages — measured 0.72–0.84 wide
+     against A4's 0.707. Sitting them in an A4 box letterboxed every one by a
+     different amount. This ratio is the middle of that spread, and a white
+     backdrop makes whatever band remains read as page margin instead of a grey
+     frame. Fit stays `contain`: cropping would take the title, which is the only
+     part of a cover doing any work at this size. */
+  --card-doc-cover-ratio:   1 / 1.29;
+  --card-doc-cover-fit:     contain;
+  --card-doc-cover-bg:      var(--white);
+  --card-doc-cover-padding: var(--space-3xs);
+
+  /* Featured card anchor height — homepage Insights Hub row 1 */
+
+  /* Concentric radius — floored at --card-min-radius so inner corners never invert. */
+  --card-media-radius:      max(var(--card-min-radius), calc(var(--card-radius) - var(--card-padding) / 2));
+
+  /* Card gradient backgrounds — featured/hero/selling-point cards */
+  --card-gradient-primary:    linear-gradient(135deg, var(--primary-dark) 20%, var(--primary-ultra-dark) 80%);
+  --card-gradient-secondary:  linear-gradient(135deg, var(--secondary-dark) 20%, var(--secondary-ultra-dark) 80%);
+  --card-gradient-surface:    linear-gradient(135deg, var(--surface-raised) 0%, var(--surface-tinted) 100%);
+
+  --data-card-bg:           var(--surface-tinted);
+  --data-card-border:       1px solid var(--border-default);
+  --data-card-accent-strip: 3px solid var(--primary);
+  --data-card-radius:       var(--radius-m);
+  --data-card-padding:      var(--space-m);
+
+/* FORMS */
+
+  --input-padding-block:    0.625em;
+  --input-padding-inline:   0.75em;
+  --input-font-size:        var(--text-m);
+  --input-line-height:      var(--leading-normal);
+  --input-bg:               var(--surface-sunken);
+  --input-bg-hover:         var(--surface-tinted);
+  --input-border:           1px solid var(--border-default);
+  --input-border-hover:     1px solid var(--border-strong);
+  --input-radius:           var(--radius-s);
+  --input-placeholder:      var(--text-subtle);
+  --input-transition:       var(--duration-fast) var(--ease-default);
+  --input-min-height:       2.75rem;
+
+  --form-group-gap:         var(--space-m);
+
+/* GRIDS */
+
+  --grid-1:                 1fr;
+  --grid-2:                 repeat(2, 1fr);
+  --grid-3:                 repeat(3, 1fr);
+  --grid-4:                 repeat(4, 1fr);
+
+  --grid-sidebar-left:      var(--sidebar-width) 1fr;
+  --grid-sidebar-right:     1fr var(--sidebar-width);
+  --grid-wide-narrow:       2fr 1fr;
+
+  --auto-grid-xs:           repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+  --auto-grid-s:            repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+  --auto-grid-m:            repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  --auto-grid-l:            repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+
+/* BORDER RADII */
+
+  --radius-xs:              0.125rem;
+  --radius-s:               0.25rem;
+  --radius-m:               0.5rem;
+  --radius-l:               0.75rem;
+  --radius-xl:              1rem;
+  --radius-2xl:             1.5rem;
+  --radius-full:            9999px;
+  --radius-round:           50%;
+
+/* SHADOWS */
+
+  --shadow-xs:              0 1px 2px   oklch(12% 0.014 200 / 6%);
+  --shadow-s:               0 2px 4px   oklch(12% 0.014 200 / 6%),
+                            0 1px 2px   oklch(12% 0.014 200 / 4%);
+  --shadow-m:               0 4px 12px  oklch(12% 0.014 200 / 8%),
+                            0 2px 4px   oklch(12% 0.014 200 / 4%);
+  --shadow-l:               0 8px 24px  oklch(12% 0.014 200 / 10%),
+                            0 2px 8px   oklch(12% 0.014 200 / 4%);
+  --shadow-xl:              0 16px 48px oklch(12% 0.014 200 / 12%),
+                            0 4px 16px  oklch(12% 0.014 200 / 5%);
+  --shadow-primary:         0 4px 20px  color-mix(in oklch, var(--primary) 28%, transparent);
+
+/* TRANSITIONS  ·  EASING */
+
+  --ease-default:           cubic-bezier(0.25, 0.10, 0.25, 1.00);
+  --ease-in:                cubic-bezier(0.55, 0.00, 1.00, 0.45);
+  --ease-out:               cubic-bezier(0.16, 1.00, 0.30, 1.00);
+  --ease-in-out:            cubic-bezier(0.45, 0.00, 0.55, 1.00);
+
+  --duration-instant:       80ms;
+  --duration-fast:          150ms;
+  --duration-normal:        250ms;
+  --duration-slow:          400ms;
+  --duration-page:          350ms;
+  --duration-xslow:         1.4s;
+  --duration-marquee:       35s;
+
+/* Z-INDEX */
+
+  --z-base:                  1;
+  --z-raised:               10;
+  --z-dropdown:            100;
+  --z-sticky:              200;
+  --z-header:              300;
+  --z-overlay:             400;
+  --z-modal:               500;
+  --z-max:                9999;
+
+/* FOCUS */
+
+  --focus-ring:             2px solid var(--primary);
+  --focus-ring-offset:      2px;
+
+  /* Underline offset — used on links, CTA text, show-more buttons */
+  --underline-offset-s:     0.15em;
+  --underline-offset-m:     0.25em;
+  --underline-offset-l:     0.35em;
+
+/* ASPECT RATIOS */
+
+  --ratio-square:           1 / 1;
+  --ratio-landscape:        16 / 9;
+  --ratio-portrait:         3 / 4;
+  --ratio-card:             4 / 3;
+  --ratio-wide:             21 / 9;
+
+/* COMPONENT TOKENS */
+
+  /* Badges */
+  --badge-padding-block:    0.2em;
+  --badge-padding-inline:   0.5em;
+  --badge-font-size:        var(--text-xs);
+  --badge-font-weight:      var(--weight-semibold);
+  --badge-radius:           var(--radius-full);
+  --badge-gap:              var(--space-2xs);
+  --badge-primary-bg:       var(--primary-ultra-light);
+  --badge-primary-text:     var(--primary-semi-dark);
+
+  /* Content tags / pills (Insights Hub, blog cards) */
+  --tag-padding-block:      var(--space-xs);
+  --tag-padding-inline:     var(--space-s);
+  --tag-radius:             var(--radius-s);
+  --tag-font-size:          var(--text-2xs);
+  --tag-font-weight:        var(--weight-semibold);
+  /* On-image overlay tags — frosted glass teal */
+  --tag-overlay-bg:         color-mix(in oklch, var(--primary) 88%, transparent);
+  --tag-overlay-text:       var(--white);
+  /* Light card tags */
+  --tag-case-study-bg:      var(--secondary-ultra-light);
+  --tag-case-study-text:    var(--secondary-ultra-dark);
+  --tag-blog-bg:            var(--neutral-ultra-light);
+  --tag-blog-text:          var(--text-muted);
+  --tag-event-bg:           color-mix(in oklch, var(--white) 18%, transparent);
+  --tag-event-text:         var(--white);
+  --tag-whitepaper-bg:      var(--primary-ultra-light);
+  --tag-whitepaper-text:    var(--primary-semi-dark);
+  --badge-success-bg:       var(--feedback-success-light);
+  --badge-success-text:     var(--feedback-success);
+  --badge-warning-bg:       var(--feedback-warning-light);
+  --badge-warning-text:     var(--feedback-warning);
+  --badge-error-bg:         var(--feedback-error-light);
+  --badge-error-text:       var(--feedback-error);
+  --badge-accent-bg:        var(--primary-ultra-light);
+  --badge-accent-text:      var(--primary-semi-dark);
+  --badge-neutral-bg:       var(--neutral-ultra-light);
+  --badge-neutral-text:     var(--text-muted);
+
+  /* Tables */
+  --table-header-bg:        var(--surface-tinted);
+  --table-header-text:      var(--text-muted);
+  --table-header-font-size: var(--text-label);
+  --table-header-tracking:  var(--tracking-caps);
+  --table-header-weight:    var(--weight-semibold);
+  --table-header-transform: uppercase;
+  --table-row-height:       clamp(2.75rem, 2.6786rem + 0.0223vw, 3.0rem);
+  --table-row-stripe-bg:    var(--surface-tinted);
+  --table-border:           1px solid var(--border-subtle);
+  --table-border-strong:    1px solid var(--border-default);
+  --table-padding-block:    var(--space-xs);
+  --table-padding-inline:   var(--space-m);
+  --table-radius:           var(--radius-m);
+
+  /* Media gallery — mosaic layout */
+  --gallery-mosaic-gap:     var(--space-s);
+  --gallery-mosaic-height:  clamp(15rem, 10.7rem + 12vw, 22rem);
+  --gallery-mosaic-aside:   18.75rem;   /* 300px — the stacked right column */
+  --gallery-more-overlay:   color-mix(in oklch, var(--primary-ultra-dark) 75%, transparent);
+
+  /* Dividers */
+  --divider:                1px solid var(--border-subtle);
+  --divider-accent:         2px solid var(--primary);
+
+  /* Stroke weights — accent-rule thickness for underlines, borders, focus */
+  --stroke-hairline:        1px;
+  --stroke-accent:          1.5px;
+  --stroke-strong:          2px;
+
+  /* Avatars */
+  --avatar-s:               2rem;
+  --avatar-m:               2.5rem;
+  --avatar-l:               3rem;
+  --avatar-xl:              4rem;
+  --avatar-bg:              var(--primary-ultra-light);
+  --avatar-text:            var(--primary-semi-dark);
+
+  /* Data Visualisation */
+  --line-thin:              1px;
+  --line-default:           1.5px;
+  --line-medium:            2px;
+  --line-thick:             3px;
+  --line-heavy:             4px;
+
+  /* Navigation */
+  --nav-item-padding-block:  var(--space-xs);
+  --nav-item-padding-inline: var(--space-m);
+  --nav-item-radius:         var(--radius-s);
+  --nav-item-active-bg:      var(--surface-tinted);
+  --nav-item-active-text:    var(--primary);
+  --nav-item-hover-bg:       color-mix(in oklch, var(--primary) 6%, transparent);
+
+  /* Modals */
+  --modal-bg:                var(--white);
+  --modal-radius:            var(--radius-l);
+  --modal-shadow:            var(--shadow-xl);
+  --modal-max-width-s:       28rem;
+  --modal-max-width-m:       42rem;
+
+  /* Tabs */
+  --tab-padding-block:       var(--space-xs);
+  --tab-padding-inline:      var(--space-m);
+  --tab-active-text:         var(--primary);
+  --tab-inactive-text:       var(--text-muted);
+  --tab-hover-text:          var(--primary-hover);
+  --tab-transition:          var(--duration-fast) var(--ease-default);
+
+  /* Skip link */
+  --skip-link-bg:            var(--primary);
+  --skip-link-text:          var(--white);
+  --skip-link-padding:       var(--space-s) var(--space-m);
+
+}
+
+/* GUTTER — laptop+ override (resolves 56px → 80px at 1024–1440px+) */
+@media (min-width: 64em) {
+  :root {
+    --gutter: clamp(3.5rem, 1.5rem + 2.5vw, 5rem);
+  }
+}
+} /* end @layer tokens */
+
+/* REDUCED MOTION */
+
+@layer tokens {
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --duration-instant:   0ms;
+      --duration-fast:      150ms;
+      --duration-normal:    150ms;
+      --duration-slow:      150ms;
+      --duration-page:      150ms;
+      --duration-xslow:     0ms;
+      --duration-marquee:   0ms;
+      --ease-default:       linear;
+      --ease-in:            linear;
+      --ease-out:           linear;
+      --ease-in-out:        linear;
+    }
+  }
+}
+
+/* THEME OVERRIDES: DARK */
+
+@layer tokens {
+
+  [data-theme="dark"] {
+    --text-main:              var(--white);
+    --text-body:              oklch(85% 0.006 200);
+    --text-muted:             oklch(70% 0.005 220);
+    --text-subtle:            oklch(55% 0.004 235);
+    --text-link:              var(--primary-light);
+    --text-link-hover:        var(--primary-ultra-light);
+    --text-link-visited:      var(--primary-semi-light);
+    --text-accent:            var(--primary-light);
+    --icon-color:             var(--primary-light);
+    --card-accent:            var(--primary-light);
+    --card-accent-strip:      3px solid var(--primary-light);
+
+    --body-bg:                var(--black);
+    --surface-raised:         var(--neutral-ultra-dark);
+    --surface-sunken:         oklch(15% 0.012 200);
+    --surface-tinted:         oklch(20% 0.024 191.5);
+    --surface-highlight:      oklch(22% 0.030 191.5);
+
+    --border-subtle:          oklch(20% 0.010 200);
+    --border-default:         oklch(28% 0.008 200);
+    --border-strong:          oklch(40% 0.005 220);
+
+    --card-bg:                var(--surface-raised);
+    --card-border:            1px solid var(--border-subtle);
+    --card-shadow:            0 2px 8px oklch(0% 0 0 / 30%);
+    --data-card-bg:           var(--surface-tinted);
+    --data-card-border:       1px solid var(--border-default);
+
+    --input-bg:               var(--surface-sunken);
+    --input-bg-hover:         var(--surface-tinted);
+    --input-border:           1px solid var(--border-default);
+    --input-border-hover:     1px solid var(--border-strong);
+
+    /* Dark-mode uses primary-semi-light (L62) — L78 loses button-identity on black. */
+    --btn-primary-text:       var(--primary-ultra-dark);
+    --btn-primary-bg-active:  var(--primary);
+    --btn-outline-border:     var(--primary-light);
+    --btn-outline-text:       var(--primary-light);
+    --btn-outline-bg-hover:   var(--primary-light);
+    --btn-outline-text-hover: var(--primary-ultra-dark);
+    --btn-ghost-text:         var(--primary-light);
+    --btn-ghost-bg-hover:     color-mix(in oklch, var(--primary-light) 10%, transparent);
+
+    --table-header-bg:        var(--surface-tinted);
+    --table-row-stripe-bg:    oklch(18% 0.016 191.5);
+    --table-border:           1px solid var(--border-subtle);
+
+    --nav-item-active-bg:     var(--surface-tinted);
+    --nav-item-hover-bg:      color-mix(in oklch, var(--primary-light) 8%, transparent);
+
+    --modal-bg:               var(--neutral-ultra-dark);
+
+    --feedback-success:       oklch(55% 0.145 150);
+    --feedback-warning:       oklch(58% 0.125  72);
+    --feedback-error:         oklch(58% 0.165  25);
+    --feedback-info:          oklch(55% 0.085 210);
+  }
+
+}
+
+/* THEME OVERRIDES: PRIMARY */
+
+@layer tokens {
+
+  [data-theme="primary"] {
+    --text-main:              var(--white);
+    --text-body:              var(--white);
+    --text-muted:             oklch(95%   0.010 191.5);
+    --text-subtle:            oklch(88%   0.015 191.5);
+    --text-link:              var(--white);
+    --text-link-hover:        var(--primary-ultra-light);
+    --text-link-visited:      oklch(92%   0.018 191.5);
+
+    --body-bg:                var(--primary);
+    --surface-raised:         var(--primary-semi-dark);
+    --surface-sunken:         var(--primary-dark);
+    --surface-tinted:         var(--primary-semi-dark);
+    --surface-highlight:      oklch(58%   0.072 191.5);
+
+    --border-subtle:          oklch(70%   0.030 191.5);
+    --border-default:         oklch(80%   0.020 191.5);
+    --border-strong:          oklch(90%   0.012 191.5);
+
+    /* Primary bg → button uses white base, secondary on hover for contrast */
+    --btn-primary-text:       var(--primary);
+    --btn-primary-bg-active:  var(--secondary-dark);
+    --btn-outline-border:     var(--white);
+    --btn-outline-text:       var(--white);
+    --btn-outline-bg-hover:   var(--white);
+    --btn-outline-text-hover: var(--primary);
+    --btn-ghost-text:         var(--white);
+    --btn-ghost-bg-hover:     color-mix(in oklch, var(--white) 14%, transparent);
+
+    --input-bg:               var(--primary-dark);
+    --input-bg-hover:         var(--primary-semi-dark);
+    --input-border:           1px solid oklch(73% 0.028 191.5);
+
+    --nav-item-active-bg:     oklch(58% 0.072 191.5);
+    --nav-item-hover-bg:      color-mix(in oklch, var(--white) 12%, transparent);
+  }
+
+}
+
+/* THEME OVERRIDES: SECONDARY */
+
+@layer tokens {
+
+  [data-theme="secondary"] {
+    --text-main:              var(--black);
+    --text-body:              var(--neutral-dark);
+    --text-muted:             oklch(40%   0.005 220);
+    --text-subtle:            oklch(55%   0.004 235);
+    --text-link:              var(--primary-dark);
+    --text-link-hover:        var(--primary-hover);
+    --text-link-visited:      var(--primary-semi-dark);
+
+    /* Tinted stops for body/surfaces — full --secondary is button+accent only */
+    --body-bg:                var(--secondary-page-bg);
+    --surface-raised:         var(--secondary-ultra-light);
+    --surface-sunken:         var(--secondary-light);
+    --surface-tinted:         var(--secondary-ultra-light);
+    --surface-highlight:      var(--secondary-page-bg);
+
+    --border-subtle:          oklch(88%   0.016 191.5);
+    --border-default:         oklch(72%   0.028 191.5);
+    --border-strong:          oklch(58%   0.040 191.5);
+
+    --nav-item-active-bg:     var(--surface-tinted);
+    --nav-item-hover-bg:      color-mix(in oklch, var(--primary) 6%, transparent);
+  }
+
+}
