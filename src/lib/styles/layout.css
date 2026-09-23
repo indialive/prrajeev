@@ -1,0 +1,37 @@
+@layer layouts {
+	.section {
+		/* Reset on each section so a nested section doesn't inherit compact spacing. */
+		--section-padding: var(--section-padding-default);
+		padding-block: var(--section-padding);
+		padding-inline: var(--gutter);
+		background: var(--section-background);
+		color: var(--text-body);
+	}
+
+	.section:where([data-spacing='compact']) {
+		--section-padding: var(--section-space-s);
+	}
+
+	.section:where([data-spacing='spacious']) {
+		--section-padding: var(--section-space-l);
+	}
+
+	.section:where([data-spacing='none']) {
+		--section-padding: 0;
+	}
+
+	.container {
+		width: 100%;
+		max-width: var(--content-width);
+		margin-inline: auto;
+		min-inline-size: 0;
+	}
+
+	.container:where([data-width='narrow']) {
+		max-width: var(--content-width-narrow);
+	}
+
+	.container:where([data-width='wide']) {
+		max-width: var(--content-width-wide);
+	}
+}

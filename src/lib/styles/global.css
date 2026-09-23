@@ -1,0 +1,110 @@
+/* One entry point fixes layer order independently of route/component loading. */
+@import './tokens.css';
+@import './layout.css';
+@import './utilities.css';
+
+@layer reset {
+	:where(*, *::before, *::after) {
+		box-sizing: border-box;
+	}
+
+	:where(body, h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) {
+		margin: 0;
+	}
+
+	:where(button, input, textarea, select) {
+		font: inherit;
+	}
+
+	:where(img, picture, video, canvas, svg) {
+		display: block;
+		max-inline-size: 100%;
+	}
+
+	:where(img, video) {
+		block-size: auto;
+	}
+
+	:where(audio, iframe) {
+		max-inline-size: 100%;
+	}
+}
+
+@layer global {
+	body {
+		min-block-size: 100svh;
+		background: var(--surface-page);
+		color: var(--text-body);
+		font-family: var(--font-body);
+		font-size: var(--font-size-body);
+		font-weight: var(--weight-regular);
+		line-height: var(--leading-body);
+		overflow-wrap: break-word;
+	}
+
+	:where(h1, h2, h3, h4, h5, h6) {
+		color: var(--text-main);
+		font-family: var(--font-heading);
+		font-weight: var(--weight-bold);
+		line-height: var(--leading-heading);
+		letter-spacing: var(--tracking-heading);
+		text-wrap: balance;
+	}
+
+	/* Components can set --heading-size without changing semantic heading levels. */
+	h1 {
+		font-size: var(--heading-size, var(--h1));
+	}
+	h2 {
+		font-size: var(--heading-size, var(--h2));
+	}
+	h3 {
+		font-size: var(--heading-size, var(--h3));
+	}
+	h4 {
+		font-size: var(--heading-size, var(--h4));
+	}
+	h5 {
+		font-size: var(--heading-size, var(--h5));
+	}
+	h6 {
+		font-size: var(--heading-size, var(--h6));
+	}
+
+	:where(a) {
+		color: var(--text-link);
+		text-underline-offset: var(--underline-offset);
+	}
+
+	:where(a:hover) {
+		color: var(--text-link-hover);
+	}
+
+	:where(small) {
+		font-size: var(--font-size-small);
+	}
+
+	:where(code, pre, kbd, samp) {
+		font-family: var(--font-mono);
+	}
+
+	:where(pre) {
+		overflow-x: auto;
+	}
+
+	:where(:focus-visible) {
+		outline: var(--focus-ring);
+		outline-offset: var(--focus-ring-offset);
+	}
+}
+
+@layer utilities {
+	/* Late-layer safeguard also covers motion that does not use duration tokens. */
+	@media (prefers-reduced-motion: reduce) {
+		:where(*, *::before, *::after) {
+			animation: none;
+			transition: none;
+			scroll-behavior: auto;
+		}
+	}
+}

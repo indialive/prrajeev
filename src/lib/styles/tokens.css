@@ -1,0 +1,139 @@
+/* Keep this order first; future scoped component CSS belongs in @layer components. */
+@layer tokens, reset, global, layouts, components, utilities;
+
+@layer tokens {
+	:root {
+		/* Primitive palette: provisional values retained from docs/design-reference.css. */
+		--primary: oklch(48.4% 0.075 191.5);
+		--primary-dark: oklch(29% 0.062 191.5);
+		--primary-hover: oklch(42% 0.074 191.5);
+		--primary-light: oklch(78% 0.042 191.5);
+		--primary-ultra-light: oklch(95% 0.018 191.5);
+		--secondary: oklch(64.36% 0.1593 47.16);
+		--secondary-ultra-light: oklch(97% 0.02 60);
+		--white: oklch(100% 0 0);
+		--off-white: oklch(97.5% 0.003 60);
+		--neutral-ultra-light: oklch(95% 0.003 60);
+		--neutral-light: oklch(90% 0.004 60);
+		--neutral-semi-light: oklch(82% 0.004 60);
+		--neutral-dark: oklch(27% 0.005 60);
+		--neutral-ultra-dark: oklch(20% 0.005 60);
+		--black: oklch(12% 0.005 60);
+
+		/* Reference font preferences; no font downloads until visual approval. */
+		--font-heading: 'Hanken Grotesk', 'Arial Nova', Arial, sans-serif;
+		--font-body: 'DM Sans', 'Arial Nova', Arial, sans-serif;
+		--font-mono: 'Courier New', Courier, monospace;
+
+		/* Fluid interpolation from 23.4375rem to 90rem (375–1440px at default settings).
+		   Rem bounds preserve user font-size preferences. Heading tokens are visual sizes. */
+		--h1: clamp(2.125rem, 1.7289rem + 1.6901vw, 3.25rem);
+		--h2: clamp(1.75rem, 1.4639rem + 1.2207vw, 2.5625rem);
+		--h3: clamp(1.5rem, 1.3019rem + 0.8451vw, 2.0625rem);
+		--h4: clamp(1.25rem, 1.118rem + 0.5634vw, 1.625rem);
+		--h5: clamp(1.125rem, 1.059rem + 0.2817vw, 1.3125rem);
+		--h6: clamp(1rem, 0.956rem + 0.1878vw, 1.125rem);
+		--font-size-body: var(--h6);
+		--font-size-lead: var(--h5);
+		--font-size-small: clamp(0.9375rem, 0.9155rem + 0.0939vw, 1rem);
+		--font-size-meta: clamp(0.875rem, 0.853rem + 0.0939vw, 0.9375rem);
+		--leading-heading: 1.2;
+		--leading-body: 1.6;
+		--weight-regular: 400;
+		--weight-semibold: 600;
+		--weight-bold: 700;
+		--tracking-heading: -0.01em;
+		--text-width: 65ch;
+
+		/* Reference spacing bounds, recalculated over the same viewport range as type. */
+		--space-2xs: clamp(0.25rem, 0.162rem + 0.3756vw, 0.5rem);
+		--space-xs: clamp(0.5rem, 0.412rem + 0.3756vw, 0.75rem);
+		--space-s: clamp(0.75rem, 0.662rem + 0.3756vw, 1rem);
+		--space-m: clamp(1rem, 0.8239rem + 0.7512vw, 1.5rem);
+		--space-l: clamp(1.5rem, 1.2359rem + 1.1268vw, 2.25rem);
+		--space-xl: clamp(2rem, 1.5599rem + 1.8779vw, 3.25rem);
+		--section-space-s: clamp(2.5rem, 1.9718rem + 2.2535vw, 4rem);
+		--section-space-m: clamp(3.5rem, 2.7958rem + 3.0047vw, 5.5rem);
+		--section-space-l: clamp(4.5rem, 3.4437rem + 4.507vw, 7.5rem);
+		/* One fluid gutter, using the reference's mobile minimum and desktop maximum. */
+		--gutter: clamp(1.5rem, 0.2676rem + 5.2582vw, 5rem);
+		--content-width: 80rem;
+		--content-width-narrow: 56.25rem;
+		--content-width-wide: 100rem;
+
+		--radius-s: 0.25rem;
+		--radius-m: 0.5rem;
+		--radius-l: 0.75rem;
+		--border-width: 1px;
+		--shadow-s: 0 2px 4px oklch(12% 0.014 200 / 6%), 0 1px 2px oklch(12% 0.014 200 / 4%);
+		--shadow-m: 0 4px 12px oklch(12% 0.014 200 / 8%), 0 2px 4px oklch(12% 0.014 200 / 4%);
+		--duration-fast: 150ms;
+		--duration-normal: 250ms;
+		--ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+		--focus-ring-width: 2px;
+		--focus-ring-offset: 2px;
+		--underline-offset: 0.15em;
+
+		/* Component tokens: only the two primitives implemented in this phase. */
+		--section-padding-default: var(--section-space-m);
+	}
+
+	/* Redeclare semantic aliases at theme boundaries so nested themes reset cleanly. */
+	:root,
+	:where([data-theme]) {
+		color-scheme: light;
+		--text-main: var(--black);
+		--text-body: var(--neutral-dark);
+		--text-muted: oklch(40% 0.005 220);
+		--text-link: var(--primary);
+		--text-link-hover: var(--primary-hover);
+		--surface-page: var(--white);
+		--surface-raised: var(--white);
+		--surface-muted: var(--neutral-ultra-light);
+		--border-default: var(--neutral-light);
+		--border-strong: var(--neutral-semi-light);
+		--focus-color: var(--primary);
+		--focus-ring: var(--focus-ring-width) solid var(--focus-color);
+		--section-background: var(--surface-page);
+	}
+
+	:where([data-theme='muted']) {
+		--surface-page: var(--off-white);
+	}
+
+	:where([data-theme='primary']) {
+		--text-main: var(--white);
+		--text-body: var(--white);
+		--text-muted: var(--primary-ultra-light);
+		--text-link: var(--white);
+		--text-link-hover: var(--primary-ultra-light);
+		--surface-page: var(--primary);
+		--surface-raised: var(--primary-dark);
+		--surface-muted: var(--primary-dark);
+		--border-default: var(--primary-light);
+		--border-strong: var(--primary-ultra-light);
+		--focus-color: var(--white);
+	}
+
+	:where([data-theme='dark']) {
+		color-scheme: dark;
+		--text-main: var(--white);
+		--text-body: oklch(85% 0.006 200);
+		--text-muted: oklch(70% 0.005 220);
+		--text-link: var(--primary-light);
+		--text-link-hover: var(--primary-ultra-light);
+		--surface-page: var(--black);
+		--surface-raised: var(--neutral-ultra-dark);
+		--surface-muted: var(--neutral-dark);
+		--border-default: oklch(28% 0.008 200);
+		--border-strong: oklch(40% 0.005 220);
+		--focus-color: var(--primary-light);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:root {
+			--duration-fast: 0ms;
+			--duration-normal: 0ms;
+		}
+	}
+}

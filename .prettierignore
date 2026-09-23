@@ -10,3 +10,6 @@ bun.lockb
 
 # Generated Cloudflare runtime types
 /worker-configuration.d.ts
+
+# Supplied design reference; preserve the source verbatim.
+/docs/design-reference.css
