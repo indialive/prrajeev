@@ -26,7 +26,7 @@
 					typography and spacing. Fonts use local fallbacks unless installed.
 				</p>
 				<div class="preview__palette">
-					{#each colours as colour}
+					{#each colours as colour (colour)}
 						<div>
 							<div class="preview__swatch" style:background={`var(--${colour})`}></div>
 							<code>--{colour}</code>
@@ -34,7 +34,7 @@
 					{/each}
 				</div>
 				<div class="preview__stack">
-					{#each [1, 2, 3, 4, 5, 6] as size}
+					{#each [1, 2, 3, 4, 5, 6] as size (size)}
 						<p class="preview__type" style:font-size={`var(--h${size})`}>
 							H{size} · Practical knowledge, clearly shared.
 						</p>
@@ -43,7 +43,7 @@
 			</div>
 		</Container>
 	</Section>
-	{#each themes as theme}
+	{#each themes as theme (theme)}
 		<Section {theme} aria-labelledby={`theme-${theme}`}>
 			<Container>
 				<div class="preview__stack">
@@ -69,15 +69,15 @@
 							>.
 						</p>
 						<pre class="preview__code"><code
-								><span class="preview__comment">// Example syntax colours</span>{'\n'}<span
+								><span class="preview__comment">// Example syntax colours</span>&#10;<span
 									class="preview__keyword">const</span
-								> topic = <span class="preview__string">'ServiceNow'</span>;{'\n'}<span
+								> topic = <span class="preview__string">'ServiceNow'</span>;&#10;<span
 									class="preview__function">explain</span
 								>(topic);</code
 							></pre>
 					</article>
 					<div class="preview__actions">
-						{#each ['info', 'success', 'warning', 'danger'] as status}
+						{#each ['info', 'success', 'warning', 'danger'] as status (status)}
 							<p style:color={`var(--status-${status})`}>{status} message</p>
 						{/each}
 					</div>
