@@ -1,29 +1,76 @@
 /* Keep this order first; future scoped component CSS belongs in @layer components. */
 @layer tokens, reset, global, layouts, components, utilities;
 
+/* ==========================================================================
+   NAMING SYSTEM
+   --------------------------------------------------------------------------
+   Palette roles, each with the same shade vocabulary:
+     --{role}                  base
+     --{role}-dark             deeper shade (text-safe on light backgrounds)
+     --{role}-hover            interaction shade
+     --{role}-light            soft shade for borders, muted text on dark
+     --{role}-ultra-light      tinted backgrounds
+   Not every role needs every shade; add one only when a component needs it.
+
+   Roles
+     primary    Infinite Blue navy: brand base, headings, buttons on light
+                (extra shade: --primary-bright, the interactive blue for links/focus)
+     secondary  Wasabi green: signature accent, CTAs on dark
+     tertiary   Aqua: learning and mentoring content, links on dark
+     highlight  Amber: tips, callouts, warnings
+     danger     Errors and destructive actions
+     neutral    Blue-tinted greys, plus --white, --off-white, --black
+
+   Semantic tokens (components use these, not the palette, wherever possible)
+     --text-*  --surface-*  --border-*  --action-*  --accent-*  --status-*  --code-*
+
+   Themes (data-theme on any element):  muted | primary | dark
+   ========================================================================== */
+
 @layer tokens {
 	:root {
-		/* Primitive palette: provisional values retained from docs/design-reference.css. */
-		--primary: oklch(48.4% 0.075 191.5);
-		--primary-dark: oklch(29% 0.062 191.5);
-		--primary-hover: oklch(42% 0.074 191.5);
-		--primary-light: oklch(78% 0.042 191.5);
-		--primary-ultra-light: oklch(95% 0.018 191.5);
-		--secondary: oklch(64.36% 0.1593 47.16);
-		--secondary-ultra-light: oklch(97% 0.02 60);
+		/* Primitive palette. Anchors: primary ~ #032D42 (Infinite Blue), secondary ~ #62D84E (Wasabi). */
+		--primary: oklch(30% 0.058 235);
+		--primary-dark: oklch(21% 0.045 235);
+		--primary-hover: oklch(37% 0.07 235);
+		--primary-bright: oklch(46% 0.1 235);
+		--primary-light: oklch(74% 0.06 235);
+		--primary-ultra-light: oklch(95% 0.014 235);
+
+		--secondary: oklch(81% 0.21 142);
+		--secondary-dark: oklch(42% 0.11 142);
+		--secondary-hover: oklch(74% 0.2 142);
+		--secondary-light: oklch(90% 0.13 142);
+		--secondary-ultra-light: oklch(97% 0.03 142);
+
+		--tertiary: oklch(50% 0.1 195);
+		--tertiary-dark: oklch(32% 0.07 195);
+		--tertiary-light: oklch(82% 0.09 195);
+		--tertiary-ultra-light: oklch(94% 0.04 195);
+
+		--highlight: oklch(78% 0.16 75);
+		--highlight-dark: oklch(48% 0.1 60);
+		--highlight-light: oklch(87% 0.14 85);
+		--highlight-ultra-light: oklch(95% 0.06 90);
+
+		--danger: oklch(52% 0.19 27);
+		--danger-light: oklch(75% 0.13 25);
+		--danger-ultra-light: oklch(94% 0.03 25);
+
 		--white: oklch(100% 0 0);
-		--off-white: oklch(97.5% 0.003 60);
-		--neutral-ultra-light: oklch(95% 0.003 60);
-		--neutral-light: oklch(90% 0.004 60);
-		--neutral-semi-light: oklch(82% 0.004 60);
-		--neutral-dark: oklch(27% 0.005 60);
-		--neutral-ultra-dark: oklch(20% 0.005 60);
-		--black: oklch(12% 0.005 60);
+		--off-white: oklch(97.5% 0.004 235);
+		--neutral-ultra-light: oklch(95% 0.006 235);
+		--neutral-light: oklch(90% 0.008 235);
+		--neutral-semi-light: oklch(82% 0.01 235);
+		--neutral-dark: oklch(27% 0.02 235);
+		--neutral-ultra-dark: oklch(20% 0.022 235);
+		--black: oklch(12% 0.025 235);
 
 		/* Reference font preferences; no font downloads until visual approval. */
 		--font-heading: 'Hanken Grotesk', 'Arial Nova', Arial, sans-serif;
 		--font-body: 'DM Sans', 'Arial Nova', Arial, sans-serif;
-		--font-mono: 'Courier New', Courier, monospace;
+		--font-mono:
+			'JetBrains Mono', 'Fira Code', ui-monospace, 'Cascadia Code', Menlo, 'Courier New', monospace;
 
 		/* Fluid interpolation from 23.4375rem to 90rem (375–1440px at default settings).
 		   Rem bounds preserve user font-size preferences. Heading tokens are visual sizes. */
@@ -37,8 +84,10 @@
 		--font-size-lead: var(--h5);
 		--font-size-small: clamp(0.9375rem, 0.9155rem + 0.0939vw, 1rem);
 		--font-size-meta: clamp(0.875rem, 0.853rem + 0.0939vw, 0.9375rem);
+		--font-size-code: 0.9em;
 		--leading-heading: 1.2;
 		--leading-body: 1.6;
+		--leading-code: 1.7;
 		--weight-regular: 400;
 		--weight-semibold: 600;
 		--weight-bold: 700;
@@ -65,8 +114,9 @@
 		--radius-m: 0.5rem;
 		--radius-l: 0.75rem;
 		--border-width: 1px;
-		--shadow-s: 0 2px 4px oklch(12% 0.014 200 / 6%), 0 1px 2px oklch(12% 0.014 200 / 4%);
-		--shadow-m: 0 4px 12px oklch(12% 0.014 200 / 8%), 0 2px 4px oklch(12% 0.014 200 / 4%);
+		/* Shadows are tinted navy so they sit naturally on the cool palette. */
+		--shadow-s: 0 2px 4px oklch(17% 0.035 235 / 8%), 0 1px 2px oklch(17% 0.035 235 / 5%);
+		--shadow-m: 0 4px 12px oklch(17% 0.035 235 / 10%), 0 2px 4px oklch(17% 0.035 235 / 5%);
 		--duration-fast: 150ms;
 		--duration-normal: 250ms;
 		--ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -78,21 +128,62 @@
 		--section-padding-default: var(--section-space-m);
 	}
 
-	/* Redeclare semantic aliases at theme boundaries so nested themes reset cleanly. */
+	/* Redeclare semantic aliases at theme boundaries so nested themes reset cleanly.
+	   Default = light. */
 	:root,
 	:where([data-theme]) {
 		color-scheme: light;
-		--text-main: var(--black);
+
+		/* Text */
+		--text-main: var(--primary-dark);
 		--text-body: var(--neutral-dark);
-		--text-muted: oklch(40% 0.005 220);
-		--text-link: var(--primary);
-		--text-link-hover: var(--primary-hover);
+		--text-muted: oklch(42% 0.016 235);
+		--text-link: var(--primary-bright);
+		--text-link-hover: var(--primary);
+
+		/* Surfaces */
 		--surface-page: var(--white);
 		--surface-raised: var(--white);
 		--surface-muted: var(--neutral-ultra-light);
+		--surface-accent: var(--secondary-ultra-light);
+
+		/* Borders */
 		--border-default: var(--neutral-light);
 		--border-strong: var(--neutral-semi-light);
-		--focus-color: var(--primary);
+		--border-accent: var(--secondary-hover);
+
+		/* Actions: navy button on light, wasabi as the accent call-to-action. */
+		--action-primary-bg: var(--primary);
+		--action-primary-bg-hover: var(--primary-hover);
+		--action-primary-text: var(--white);
+		--action-accent-bg: var(--secondary);
+		--action-accent-bg-hover: var(--secondary-hover);
+		--action-accent-text: var(--primary-dark);
+
+		/* Accents: decoration and content-type marks, not text on light backgrounds. */
+		--accent-signature: var(--secondary);
+		--accent-learn: var(--tertiary);
+		--accent-highlight: var(--highlight);
+		--accent-highlight-soft: var(--highlight-ultra-light);
+
+		/* Status */
+		--status-info: var(--primary-bright);
+		--status-success: var(--secondary-dark);
+		--status-warning: var(--highlight-dark);
+		--status-danger: var(--danger);
+
+		/* Code: the block stays dark in every theme so snippets read like an editor. */
+		--code-bg: var(--primary-dark);
+		--code-text: var(--primary-ultra-light);
+		--code-comment: var(--primary-light);
+		--code-keyword: var(--secondary);
+		--code-string: var(--highlight-light);
+		--code-function: var(--tertiary-light);
+		--code-inline-bg: var(--neutral-ultra-light);
+		--code-inline-text: var(--primary);
+
+		/* Focus */
+		--focus-color: var(--primary-bright);
 		--focus-ring: var(--focus-ring-width) solid var(--focus-color);
 		--section-background: var(--surface-page);
 	}
@@ -101,33 +192,67 @@
 		--surface-page: var(--off-white);
 	}
 
+	/* Primary: deep navy band. Wasabi becomes the main action colour here. */
 	:where([data-theme='primary']) {
+		color-scheme: dark;
 		--text-main: var(--white);
-		--text-body: var(--white);
-		--text-muted: var(--primary-ultra-light);
-		--text-link: var(--white);
-		--text-link-hover: var(--primary-ultra-light);
+		--text-body: var(--primary-ultra-light);
+		--text-muted: var(--primary-light);
+		--text-link: var(--secondary);
+		--text-link-hover: var(--secondary-light);
 		--surface-page: var(--primary);
 		--surface-raised: var(--primary-dark);
 		--surface-muted: var(--primary-dark);
-		--border-default: var(--primary-light);
-		--border-strong: var(--primary-ultra-light);
-		--focus-color: var(--white);
+		--surface-accent: var(--primary-hover);
+		--border-default: var(--primary-hover);
+		--border-strong: var(--primary-light);
+		--border-accent: var(--secondary);
+		--action-primary-bg: var(--secondary);
+		--action-primary-bg-hover: var(--secondary-light);
+		--action-primary-text: var(--primary-dark);
+		--action-accent-bg: var(--white);
+		--action-accent-bg-hover: var(--primary-ultra-light);
+		--action-accent-text: var(--primary-dark);
+		--accent-learn: var(--tertiary-light);
+		--status-info: var(--primary-light);
+		--status-success: var(--secondary);
+		--status-warning: var(--highlight-light);
+		--status-danger: var(--danger-light);
+		--code-bg: var(--black);
+		--code-inline-bg: var(--primary-hover);
+		--code-inline-text: var(--white);
+		--focus-color: var(--secondary);
 	}
 
 	:where([data-theme='dark']) {
 		color-scheme: dark;
 		--text-main: var(--white);
-		--text-body: oklch(85% 0.006 200);
-		--text-muted: oklch(70% 0.005 220);
-		--text-link: var(--primary-light);
-		--text-link-hover: var(--primary-ultra-light);
+		--text-body: oklch(85% 0.008 235);
+		--text-muted: oklch(70% 0.012 235);
+		--text-link: var(--tertiary-light);
+		--text-link-hover: var(--tertiary-ultra-light);
 		--surface-page: var(--black);
 		--surface-raised: var(--neutral-ultra-dark);
 		--surface-muted: var(--neutral-dark);
-		--border-default: oklch(28% 0.008 200);
-		--border-strong: oklch(40% 0.005 220);
-		--focus-color: var(--primary-light);
+		--surface-accent: var(--primary-dark);
+		--border-default: oklch(28% 0.02 235);
+		--border-strong: oklch(40% 0.015 235);
+		--border-accent: var(--secondary);
+		--action-primary-bg: var(--secondary);
+		--action-primary-bg-hover: var(--secondary-light);
+		--action-primary-text: var(--primary-dark);
+		--action-accent-bg: var(--tertiary-light);
+		--action-accent-bg-hover: var(--tertiary-ultra-light);
+		--action-accent-text: var(--primary-dark);
+		--accent-learn: var(--tertiary-light);
+		--status-info: var(--primary-light);
+		--status-success: var(--secondary);
+		--status-warning: var(--highlight-light);
+		--status-danger: var(--danger-light);
+		--code-bg: var(--neutral-ultra-dark);
+		--code-inline-bg: var(--neutral-dark);
+		--code-inline-text: var(--neutral-ultra-light);
+		--focus-color: var(--secondary);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
