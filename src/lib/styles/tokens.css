@@ -106,7 +106,7 @@
 		--section-space-l: clamp(4.5rem, 3.4437rem + 4.507vw, 7.5rem);
 		/* One fluid gutter, using the reference's mobile minimum and desktop maximum. */
 		--gutter: clamp(1.5rem, 0.2676rem + 5.2582vw, 5rem);
-		--content-width: 85.375rem; /* 1366px at the default root font size. */
+		--content-width: 80rem; /* 1280px at the default root font size. */
 		--content-width-narrow: 56.25rem;
 		--content-width-wide: 100rem;
 
