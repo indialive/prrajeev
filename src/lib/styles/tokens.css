@@ -1,4 +1,4 @@
-/* Approved Pen palette and spacing for the dark prrajeev.com design. */
+/* Dark editorial palette for prrajeev.com. Layout values remain aligned with Pen. */
 @layer tokens, reset, global, layouts, components, utilities;
 
 @layer tokens {
@@ -9,17 +9,20 @@
 		--primary-light: oklch(74.112% 0.06026 234.58);
 		--aqua: oklch(82.066% 0.09041 194.65);
 		--white: oklch(100% 0 0);
-		--neutral-page: oklch(12.057% 0.02431 231.02);
-		--neutral-raised: oklch(20.133% 0.02216 235.02);
+		--neutral-page: oklch(21% 0.045 238);
+		--neutral-raised: oklch(24% 0.032 239);
 		--neutral-body: oklch(85.073% 0.0078 228.87);
 		--neutral-muted: oklch(70.087% 0.01174 234.9);
-		--neutral-border: oklch(28.061% 0.01982 229.95);
+		--neutral-border: oklch(35% 0.028 237);
 
-		/* Pen's two radial fills over the page surface. */
-		--page-glow-navy: oklch(30.041% 0.05848 235.48 / 0.69);
-		--page-glow-navy-clear: oklch(30.041% 0.05848 235.48 / 0);
-		--page-glow-aqua: oklch(82.066% 0.09041 194.65 / 0.102);
-		--page-glow-aqua-clear: oklch(82.066% 0.09041 194.65 / 0);
+		/* Atmospheric light for the shared page canvas. */
+		--page-glow-blue: oklch(52% 0.12 242 / 0.48);
+		--page-glow-aqua: oklch(73% 0.09 199 / 0.24);
+		--page-glow-teal: oklch(54% 0.085 190 / 0.3);
+		--surface-shell: oklch(19% 0.027 239 / 0.94);
+		--surface-card-top: oklch(28% 0.04 236);
+		--surface-card-bottom: oklch(22% 0.032 239);
+		--shadow-card: 0 1.25rem 3rem oklch(8% 0.022 239 / 0.22);
 
 		--font-heading: 'Outfit', 'Arial Nova', Arial, sans-serif;
 		--font-body: 'Outfit', 'Arial Nova', Arial, sans-serif;
@@ -75,8 +78,12 @@
 		--shell-sidebar-width: 15rem;
 		--home-content-width: 68.5rem;
 		--home-hero-copy-width: 55.5rem;
-		--home-portrait-size: 9rem;
-		--home-portrait-size-tablet: 5.5rem;
+		--home-portrait-size: 10.5rem;
+		--home-portrait-height: 11.75rem;
+		--home-portrait-frame-size: 13.25rem;
+		--home-portrait-size-tablet: 6rem;
+		--home-portrait-height-tablet: 6.75rem;
+		--home-portrait-frame-size-tablet: 7.5rem;
 		--home-section-gap: 2.25rem;
 	}
 
@@ -90,7 +97,7 @@
 		--text-link-hover: color-mix(in oklch, var(--aqua) 78%, var(--white));
 		--surface-page: var(--neutral-page);
 		--surface-raised: var(--neutral-raised);
-		--surface-accent: var(--primary-dark);
+		--surface-accent: oklch(32% 0.06 237 / 0.8);
 		--border-default: var(--neutral-border);
 		--border-strong: color-mix(in oklch, var(--neutral-border) 72%, var(--primary-light));
 		--border-accent: var(--primary-light);

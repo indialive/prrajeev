@@ -12,16 +12,24 @@
 		{ section: 'primary', label: 'Home', path: '/' },
 		{ section: 'primary', label: 'About me', path: '/about-me' },
 		{ section: 'primary', label: 'Articles', path: '/articles' },
-		{ section: 'help', label: 'Mentorship', path: '/mentorship' },
 		{ section: 'help', label: 'Consultation', path: '/consultation' },
 		{ section: 'help', label: 'Contact', path: '/contact' }
 	];
 
-	let menuItems = $derived(
-		site.menu_items?.length
+	let menuItems = $derived.by(() => {
+		const source = site.menu_items?.length
 			? site.menu_items.filter((item) => item.path.startsWith('/') && !item.path.startsWith('//'))
-			: fallbackMenu
-	);
+			: fallbackMenu;
+		const items = source.filter((item) => item.path !== '/courses' && item.path !== '/mentorship');
+		const consultationIndex = items.findIndex((item) => item.path === '/consultation');
+		const helpIndex = items.findIndex((item) => item.section === 'help');
+		items.splice(consultationIndex >= 0 ? consultationIndex : helpIndex >= 0 ? helpIndex : items.length, 0, {
+			section: 'help',
+			label: 'Learn with me',
+			path: '/courses'
+		});
+		return items;
+	});
 
 	function isCurrent(path: string): boolean {
 		return path === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(path);
@@ -74,6 +82,7 @@
 					{#each menuItems.filter((item) => item.section === 'help') as item (item.path)}
 						<a
 							class="site-nav__link"
+							data-featured={item.path === '/courses'}
 							data-active={isCurrent(item.path)}
 							aria-current={isCurrent(item.path) ? 'page' : undefined}
 							href={item.path}
@@ -87,18 +96,24 @@
 			{/if}
 		</nav>
 
-		<div class="site-sidebar__bottom">
-			<a href="/contact"><span>Write to me</span></a>
-			{#if site.linkedin_url}
-				<a href={site.linkedin_url} target="_blank" rel="noopener noreferrer"><span>Connect on LinkedIn</span>
-				</a>
-			{/if}
-			{#if site.whatsapp_url}
-				<a href={site.whatsapp_url} target="_blank" rel="noopener noreferrer"><span>Chat on WhatsApp</span>
-				</a>
-			{/if}
-			<small>{site.brand_name || 'P R Rajeev'}<br />{site.tagline || 'ServiceNow developer'}</small>
-		</div>
+		{#if site.linkedin_url || site.whatsapp_url}
+			<div class="site-sidebar__social" aria-label="Social links">
+				{#if site.linkedin_url}
+					<a href={site.linkedin_url} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M20.45 2H3.55C2.69 2 2 2.68 2 3.52v16.96c0 .84.69 1.52 1.55 1.52h16.9c.86 0 1.55-.68 1.55-1.52V3.52c0-.84-.69-1.52-1.55-1.52ZM7.93 18.75H4.98V9.2h2.95v9.55ZM6.45 7.9a1.71 1.71 0 1 1 0-3.42 1.71 1.71 0 0 1 0 3.42Zm12.3 10.85H15.8V14.1c0-1.11-.02-2.54-1.55-2.54-1.55 0-1.79 1.21-1.79 2.46v4.73H9.51V9.2h2.83v1.3h.04c.39-.75 1.36-1.55 2.79-1.55 2.99 0 3.58 1.97 3.58 4.53v5.27Z" />
+						</svg>
+					</a>
+				{/if}
+				{#if site.whatsapp_url}
+					<a href={site.whatsapp_url} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M12 2a9.94 9.94 0 0 0-8.56 15.02L2 22l5.13-1.35A10 10 0 1 0 12 2Zm0 18.18a8.12 8.12 0 0 1-4.13-1.13l-.3-.18-3.05.8.81-2.97-.2-.31A8.18 8.18 0 1 1 12 20.18Zm4.48-6.13c-.25-.12-1.46-.72-1.69-.8-.23-.08-.4-.12-.56.13-.17.25-.65.8-.79.96-.15.17-.29.19-.54.06a6.71 6.71 0 0 1-3.31-2.89c-.25-.43.25-.4.71-1.33.08-.17.04-.32-.02-.45-.06-.12-.56-1.35-.77-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.09s.9 2.42 1.02 2.59c.13.17 1.77 2.7 4.28 3.79.6.26 1.07.41 1.44.52.61.2 1.17.17 1.61.1.49-.07 1.46-.6 1.67-1.17.21-.57.21-1.06.15-1.17-.06-.11-.23-.17-.48-.29Z" />
+						</svg>
+					</a>
+				{/if}
+			</div>
+		{/if}
 	</aside>
 
 	<div class="site-frame__content">
@@ -143,7 +158,7 @@
 			min-block-size: var(--shell-header-height);
 			padding-inline: var(--space-l);
 			border-block-end: var(--border-width) solid var(--border-default);
-			background: var(--surface-raised);
+			background: var(--surface-shell);
 		}
 		.site-header__brand {
 			display: inline-flex;
@@ -161,8 +176,8 @@
 			flex: none;
 			border: var(--border-width) solid var(--border-strong);
 			border-radius: 50%;
-			background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-			color: var(--text-main);
+			background: linear-gradient(135deg, var(--aqua), var(--primary-light));
+			color: var(--primary-dark);
 			font-size: var(--font-size-meta);
 		}
 		.site-header__name {
@@ -225,7 +240,7 @@
 			min-block-size: calc(100svh - var(--shell-header-height));
 			padding: var(--space-l) var(--space-s);
 			border-inline-end: var(--border-width) solid var(--border-default);
-			background: var(--surface-raised);
+			background: var(--surface-shell);
 		}
 		.site-nav {
 			display: grid;
@@ -259,25 +274,31 @@
 			color: var(--text-main);
 		}
 		.site-nav__link[data-active='true'] :global(.nav-icon) { color: var(--aqua); }
-		.site-sidebar__bottom {
-			display: grid;
-			gap: var(--space-s);
+		.site-nav__link[data-featured='true'] {
+			color: var(--text-main);
+			font-weight: var(--weight-semibold);
+		}
+		.site-nav__link[data-featured='true'] :global(.nav-icon) { color: var(--aqua); }
+		.site-sidebar__social {
+			display: flex;
+			gap: var(--space-xs);
 			padding: var(--space-s);
 			border-block-start: var(--border-width) solid var(--border-default);
 		}
-		.site-sidebar__bottom a {
+		.site-sidebar__social a {
+			display: grid;
+			place-items: center;
+			inline-size: 2.75rem;
+			block-size: 2.75rem;
+			border: var(--border-width) solid var(--border-default);
+			border-radius: var(--radius-m);
 			color: var(--text-body);
-			font-size: var(--font-size-meta);
-			text-decoration: none;
 		}
-		.site-sidebar__bottom a:hover {
-			color: var(--text-link);
+		.site-sidebar__social a:hover {
+			border-color: var(--border-accent);
+			color: var(--aqua);
 		}
-		.site-sidebar__bottom small {
-			color: var(--text-muted);
-			font-size: var(--font-size-meta);
-			line-height: 1.4;
-		}
+		.site-sidebar__social svg { inline-size: 1.25rem; block-size: 1.25rem; }
 		.site-frame__content {
 			min-inline-size: 0;
 		}
@@ -286,26 +307,15 @@
 			isolation: isolate;
 			min-block-size: calc(100svh - var(--shell-header-height));
 			padding: 0;
-			background: radial-gradient(ellipse 35% 27.5% at 96% 28%, var(--page-glow-aqua), var(--page-glow-aqua-clear)),
-				radial-gradient(ellipse 55% 40% at 86% 8%, var(--page-glow-navy), var(--page-glow-navy-clear)),
-				var(--surface-page);
+			background:
+				radial-gradient(ellipse 75% 55% at 98% 5%, var(--page-glow-blue), transparent 88%),
+				radial-gradient(ellipse 65% 45% at 8% 95%, var(--page-glow-teal), transparent 90%),
+				radial-gradient(ellipse 45% 30% at 92% 42%, var(--page-glow-aqua), transparent 95%),
+				linear-gradient(125deg, var(--surface-page), color-mix(in oklch, var(--surface-page) 74%, var(--primary)));
 		}
 		.site-main > :global(.section) {
 			position: relative;
 			z-index: 1;
-		}
-		.site-main::before {
-			position: absolute;
-			z-index: 0;
-			inset-block-start: 1.25rem;
-			inset-inline-end: 3.75rem;
-			inline-size: 20rem;
-			block-size: 15rem;
-			background-image: radial-gradient(circle at 1px 1px, var(--primary-light) 1px, transparent 1.5px);
-			background-size: 1.75rem 1.75rem;
-			content: '';
-			opacity: 0.22;
-			pointer-events: none;
 		}
 		.site-footer {
 			display: flex;
@@ -354,9 +364,7 @@
 				min-block-size: calc(100svh - var(--shell-header-height-mobile));
 				padding: 0;
 			}
-			.site-main::before {
-				inset-inline-end: 0;
-			}
+
 			.site-footer {
 				flex-direction: column;
 				padding-inline: var(--space-m);

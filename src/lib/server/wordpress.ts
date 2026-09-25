@@ -3,6 +3,7 @@ import { dev } from '$app/environment';
 
 export type WordPressImage = {
 	url?: string;
+	srcset?: string;
 	alt?: string;
 	width?: number;
 	height?: number;
@@ -151,7 +152,7 @@ type MediaResponse = {
 	};
 };
 
-export async function resolveImage(value: unknown, fetcher: typeof fetch): Promise<WordPressImage | false> {
+export async function resolveImage(value: unknown, fetcher: typeof fetch, size: 'medium' | 'large' = 'medium'): Promise<WordPressImage | false> {
 	if (!value) return false;
 	if (typeof value === 'object' && 'url' in value) return value as WordPressImage;
 	if (typeof value !== 'number') return false;
@@ -160,9 +161,12 @@ export async function resolveImage(value: unknown, fetcher: typeof fetch): Promi
 	const response = await fetcher(base + '/media/' + value + '?_fields=source_url,alt_text,media_details');
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for media ' + value + '.');
 	const media = (await response.json()) as MediaResponse;
-	const preferred = media.media_details?.sizes?.medium ?? media.media_details?.sizes?.thumbnail;
+	const preferred = media.media_details?.sizes?.[size] ?? media.media_details?.sizes?.medium ?? media.media_details?.sizes?.thumbnail;
+	const variants = [...Object.values(media.media_details?.sizes ?? {}), { source_url: media.source_url, width: media.media_details?.width || 0 }];
+	const srcset = variants.filter((item) => item.width > 0).map((item) => item.source_url + ' ' + item.width + 'w').join(', ');
 	return {
 		url: preferred?.source_url || media.source_url,
+		srcset: srcset || undefined,
 		alt: media.alt_text,
 		width: preferred?.width || media.media_details?.width,
 		height: preferred?.height || media.media_details?.height
@@ -199,6 +203,8 @@ export type WordPressCourse = {
 	title: { rendered: string };
 	content: { rendered: string };
 	excerpt: { rendered: string };
+	featured_media?: number;
+	image?: WordPressImage | false;
 	acf: CourseFields;
 };
 
@@ -216,11 +222,11 @@ export async function getCourse(slug: string, fetcher: typeof fetch): Promise<Wo
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
 	const response = await fetcher(
-		base + '/courses?slug=' + encodeURIComponent(slug) + '&_fields=id,slug,title,content,excerpt,acf',
+		base + '/courses?slug=' + encodeURIComponent(slug) + '&_fields=id,slug,title,content,excerpt,featured_media,acf',
 		{ headers: { Accept: 'application/json' } }
 	);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for course ' + slug + '.');
 	const courses = (await response.json()) as WordPressCourse[];
 	if (!courses[0]) throw new Error('Published course "' + slug + '" was not found.');
-	return courses[0];
+	return { ...courses[0], image: await resolveImage(courses[0].featured_media, fetcher, 'large') };
 }

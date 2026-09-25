@@ -14,90 +14,102 @@
 	<title>{site.brand_name || 'P R Rajeev'} - ServiceNow developer and mentor</title>
 	<meta
 		name="description"
-		content={home.hero_intro || 'ServiceNow development, mentorship and technical consultation with P R Rajeev.'}
+		content={home.hero_intro ||
+			'ServiceNow development, mentorship and technical consultation with P R Rajeev.'}
 	/>
 </svelte:head>
 
 <Section>
-<Container>
-	<div class="home">
-		<section class="home__hero" aria-labelledby="home-title">
-			<div class="home__hero-copy">
-				{#if home.hero_kicker}<p class="home__eyebrow">{home.hero_kicker}</p>{/if}
-				<h1 id="home-title">{home.hero_heading || 'P R Rajeev'}</h1>
-				{#if home.hero_intro}<p class="home__lead">{home.hero_intro}</p>{/if}
-			</div>
-			{#if portrait?.url}
-				<img
-					class="home__portrait"
-					src={portrait?.url}
-					alt={portrait?.alt || 'Portrait of P R Rajeev'}
-					width={portrait?.width || 144}
-					height={portrait?.height || 144}
-					fetchpriority="high"
-				/>
-			{:else}
-				<div class="home__portrait home__portrait--placeholder" aria-hidden="true">PR</div>
+	<Container>
+		<div class="home">
+			<section class="home__hero" aria-labelledby="home-title">
+				<div class="home__hero-copy">
+					{#if home.hero_kicker}<p class="home__eyebrow">{home.hero_kicker}</p>{/if}
+					<h1 id="home-title">{home.hero_heading || 'P R Rajeev'}</h1>
+					{#if home.hero_intro}<p class="home__lead">{home.hero_intro}</p>{/if}
+				</div>
+				<div class="home__portrait-feature">
+					{#if portrait?.url}
+						<img
+							class="home__portrait"
+							src={portrait?.url}
+							alt={portrait?.alt || 'Portrait of P R Rajeev'}
+							width={portrait?.width || 144}
+							height={portrait?.height || 144}
+							fetchpriority="high"
+						/>
+					{:else}
+						<div class="home__portrait home__portrait--placeholder" aria-hidden="true">PR</div>
+					{/if}
+				</div>
+			</section>
+
+			<section class="home__help" aria-labelledby="help-title">
+				<h2 id="help-title">How can I help?</h2>
+				<div class="home__cards">
+					<article class="home-card">
+						<p class="home-card__eyebrow">Mentorship</p>
+						<h3>{home.mentorship_heading || 'Learning ServiceNow?'}</h3>
+						{#if home.mentorship_summary}<p>{home.mentorship_summary}</p>{/if}
+						<a href="/mentorship">Learn with me <span aria-hidden="true">&#8599;</span></a>
+					</article>
+					<article class="home-card">
+						<p class="home-card__eyebrow">Technical consultation</p>
+						<h3>{home.consultation_heading || 'Working through a problem?'}</h3>
+						{#if home.consultation_summary}<p>{home.consultation_summary}</p>{/if}
+						<a href="/consultation">Talk it through <span aria-hidden="true">&#8599;</span></a>
+					</article>
+				</div>
+			</section>
+
+			{#if home.writing_note}
+				<section class="home__writing" aria-labelledby="writing-title">
+					<div>
+						<p class="home__eyebrow">From my desk</p>
+						<h2 id="writing-title">Work & writing</h2>
+					</div>
+					<div>
+						<p>{home.writing_note}</p>
+						<a href="/articles">Read articles <span aria-hidden="true">&#8599;</span></a>
+					</div>
+				</section>
 			{/if}
-		</section>
 
-		<section class="home__help" aria-labelledby="help-title">
-			<h2 id="help-title">How can I help?</h2>
-			<div class="home__cards">
-				<article class="home-card">
-					<p class="home-card__eyebrow">Mentorship</p>
-					<h3>{home.mentorship_heading || 'Learning ServiceNow?'}</h3>
-					{#if home.mentorship_summary}<p>{home.mentorship_summary}</p>{/if}
-					<a href="/mentorship">Learn with me <span aria-hidden="true">&#8599;</span></a>
-				</article>
-				<article class="home-card">
-					<p class="home-card__eyebrow">Technical consultation</p>
-					<h3>{home.consultation_heading || 'Working through a problem?'}</h3>
-					{#if home.consultation_summary}<p>{home.consultation_summary}</p>{/if}
-					<a href="/consultation">Talk it through <span aria-hidden="true">&#8599;</span></a>
-				</article>
-			</div>
-		</section>
+			{#if hasNow}
+				<section class="home__now" aria-labelledby="now-title">
+					<h2 id="now-title">These days</h2>
+					<div class="home__now-grid">
+						{#if home.now_learning}
+							<div>
+								<span>Learning</span>
+								<p>{home.now_learning}</p>
+							</div>
+						{/if}
+						{#if home.now_making}
+							<div>
+								<span>Making</span>
+								<p>{home.now_making}</p>
+							</div>
+						{/if}
+						{#if home.now_listening}
+							<div>
+								<span>Listening</span>
+								<p>{home.now_listening}</p>
+							</div>
+						{/if}
+					</div>
+				</section>
+			{/if}
 
-		{#if home.writing_note}
-			<section class="home__writing" aria-labelledby="writing-title">
+			<section class="home__contact" aria-labelledby="contact-title">
 				<div>
-					<p class="home__eyebrow">From my desk</p>
-					<h2 id="writing-title">Work & writing</h2>
+					<h2 id="contact-title">Not sure which path fits?</h2>
+					<p>Just tell me a little about what you need help with. We can start there.</p>
 				</div>
-				<div>
-					<p>{home.writing_note}</p>
-					<a href="/articles">Read articles <span aria-hidden="true">&#8599;</span></a>
-				</div>
+				<a href="/contact">Write to me <span aria-hidden="true">&#8599;</span></a>
 			</section>
-		{/if}
-
-		{#if hasNow}
-			<section class="home__now" aria-labelledby="now-title">
-				<h2 id="now-title">These days</h2>
-				<div class="home__now-grid">
-					{#if home.now_learning}
-						<div><span>Learning</span><p>{home.now_learning}</p></div>
-					{/if}
-					{#if home.now_making}
-						<div><span>Making</span><p>{home.now_making}</p></div>
-					{/if}
-					{#if home.now_listening}
-						<div><span>Listening</span><p>{home.now_listening}</p></div>
-					{/if}
-				</div>
-			</section>
-		{/if}
-
-		<section class="home__contact" aria-labelledby="contact-title">
-			<div>
-				<h2 id="contact-title">Not sure which path fits?</h2>
-				<p>Just tell me a little about what you need help with. We can start there.</p>
-			</div>
-			<a href="/contact">Write to me <span aria-hidden="true">&#8599;</span></a>
-		</section>
-	</div>
-</Container>
+		</div>
+	</Container>
 </Section>
 
 <style>
@@ -131,6 +143,9 @@
 			max-inline-size: 17ch;
 			line-height: 1.2;
 			white-space: pre-line;
+			background: linear-gradient(100deg, var(--text-main) 15%, var(--aqua) 92%);
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
 		}
 		.home__lead {
 			max-inline-size: var(--text-width);
@@ -138,14 +153,41 @@
 			color: var(--text-body);
 			font-size: var(--font-size-body);
 		}
-		.home__portrait {
-			inline-size: var(--home-portrait-size);
-			block-size: var(--home-portrait-size);
+		.home__portrait-feature {
+			position: relative;
+			display: grid;
+			place-items: center;
+			inline-size: var(--home-portrait-frame-size);
+			block-size: var(--home-portrait-frame-size);
 			flex: none;
-			margin-block-start: 2.9375rem;
-			margin-inline-end: 0.875rem;
-			border: var(--border-width) solid var(--border-strong);
-			border-radius: 50%;
+			margin-block-start: var(--space-s);
+			margin-inline-end: var(--space-xs);
+			isolation: isolate;
+		}
+		.home__portrait-feature::before,
+		.home__portrait-feature::after {
+			position: absolute;
+			inline-size: var(--home-portrait-size);
+			block-size: var(--home-portrait-height);
+			border-radius: var(--radius-l);
+			content: '';
+		}
+		.home__portrait-feature::before {
+			background: color-mix(in oklch, var(--primary-light) 36%, var(--surface-raised));
+			transform: translate(-0.65rem, 0.25rem) rotate(-8deg);
+		}
+		.home__portrait-feature::after {
+			background: color-mix(in oklch, var(--aqua) 24%, var(--surface-raised));
+			transform: translate(0.6rem, -0.3rem) rotate(7deg);
+		}
+		.home__portrait {
+			position: relative;
+			z-index: 1;
+			inline-size: var(--home-portrait-size);
+			block-size: var(--home-portrait-height);
+			border: var(--border-width) solid color-mix(in oklch, var(--white) 45%, transparent);
+			border-radius: var(--radius-l);
+			box-shadow: 0 0.75rem 2rem color-mix(in oklch, var(--surface-page) 60%, transparent);
 			object-fit: cover;
 		}
 		.home__portrait--placeholder {
@@ -173,9 +215,17 @@
 			gap: var(--space-xs);
 			min-block-size: 17.125rem;
 			padding: var(--space-m);
-			border: var(--border-width) solid var(--border-default);
+			border: var(--border-width) solid var(--border-strong);
 			border-radius: var(--radius-m);
-			background: var(--surface-raised);
+			background: linear-gradient(155deg, var(--surface-card-top), var(--surface-card-bottom));
+			box-shadow: var(--shadow-card);
+			transition:
+				border-color var(--duration-fast) var(--ease-default),
+				transform var(--duration-fast) var(--ease-default);
+		}
+		.home-card:hover {
+			border-color: var(--border-accent);
+			transform: translateY(-0.1875rem);
 		}
 		.home-card h3 {
 			font-size: var(--h4);
@@ -242,10 +292,22 @@
 				align-items: flex-start;
 				min-block-size: 14.3125rem;
 			}
+			.home__portrait-feature {
+				inline-size: var(--home-portrait-frame-size-tablet);
+				block-size: var(--home-portrait-frame-size-tablet);
+				margin-block-start: 0;
+			}
+			.home__portrait-feature::before,
+			.home__portrait-feature::after,
 			.home__portrait {
 				inline-size: var(--home-portrait-size-tablet);
-				block-size: var(--home-portrait-size-tablet);
-				margin-block-start: 0;
+				block-size: var(--home-portrait-height-tablet);
+			}
+			.home__portrait-feature::before {
+				transform: translate(-0.3rem, 0.15rem) rotate(-8deg);
+			}
+			.home__portrait-feature::after {
+				transform: translate(0.3rem, -0.15rem) rotate(7deg);
 			}
 			.home__cards,
 			.home__writing,
@@ -258,8 +320,12 @@
 			}
 		}
 		@media (max-width: 30rem) {
-			.home__hero { min-block-size: 18.1875rem; }
-			.home__portrait { display: none; }
+			.home__hero {
+				min-block-size: 18.1875rem;
+			}
+			.home__portrait-feature {
+				display: none;
+			}
 		}
 	}
 </style>
