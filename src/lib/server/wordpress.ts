@@ -78,7 +78,8 @@ export const previewHome: HomeFields = {
 	now_listening: '[Optional personal note]'
 };
 function apiBase(): string | undefined {
-	return env.WORDPRESS_API_URL?.replace(/\/+$/, '');
+	const configured = env.WORDPRESS_API_URL?.trim();
+	return (configured || (dev ? undefined : 'https://cms.prrajeev.com/wp-json/wp/v2'))?.replace(/\/+$/, '');
 }
 
 export function hasWordPress(): boolean {
@@ -99,7 +100,7 @@ export async function getPage<T>(slug: string, fetcher: typeof fetch): Promise<W
 
 	const pages = (await response.json()) as WordPressPage<T>[];
 	if (!pages[0]) {
-		throw new Error(`Published WordPress page “${slug}” was not found.`);
+		throw new Error(`Published WordPress page â€œ${slug}â€ was not found.`);
 	}
 	return pages[0];
 }
