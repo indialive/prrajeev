@@ -100,7 +100,7 @@ export async function getPage<T>(slug: string, fetcher: typeof fetch): Promise<W
 
 	const pages = (await response.json()) as WordPressPage<T>[];
 	if (!pages[0]) {
-		throw new Error(`Published WordPress page â€œ${slug}â€ was not found.`);
+		throw new Error(`Published WordPress page "${slug}" was not found.`);
 	}
 	return pages[0];
 }
