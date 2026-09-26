@@ -1,3 +1,4 @@
+import { wordpressFetch } from './wordpress-cache';
 import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 
@@ -93,7 +94,7 @@ export async function getPage<T>(slug: string, fetcher: typeof fetch): Promise<W
 	}
 
 	const url = `${base}/pages?slug=${encodeURIComponent(slug)}&_fields=id,slug,title,content,acf`;
-	const response = await fetcher(url, { headers: { Accept: 'application/json' } });
+	const response = await wordpressFetch(url, fetcher);
 	if (!response.ok) {
 		throw new Error(`WordPress returned ${response.status} for page ${slug}.`);
 	}
@@ -120,9 +121,7 @@ export type WordPressPost = {
 export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await fetcher(base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt', {
-		headers: { Accept: 'application/json' }
-	});
+	const response = await wordpressFetch(base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt', fetcher);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for articles.');
 	return (await response.json()) as WordPressPost[];
 }
@@ -159,7 +158,7 @@ export async function resolveImage(value: unknown, fetcher: typeof fetch, size: 
 	if (typeof value !== 'number') return false;
 	const base = apiBase();
 	if (!base) return false;
-	const response = await fetcher(base + '/media/' + value + '?_fields=source_url,alt_text,media_details');
+	const response = await wordpressFetch(base + '/media/' + value + '?_fields=source_url,alt_text,media_details', fetcher);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for media ' + value + '.');
 	const media = (await response.json()) as MediaResponse;
 	const preferred = media.media_details?.sizes?.[size] ?? media.media_details?.sizes?.medium ?? media.media_details?.sizes?.thumbnail;
@@ -177,9 +176,9 @@ export async function resolveImage(value: unknown, fetcher: typeof fetch, size: 
 export async function getPost(slug: string, fetcher: typeof fetch): Promise<WordPressPost & { content: { rendered: string } }> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await fetcher(
+	const response = await wordpressFetch(
 		base + '/posts?slug=' + encodeURIComponent(slug) + '&_fields=id,slug,date,title,excerpt,content',
-		{ headers: { Accept: 'application/json' } }
+		fetcher
 	);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for article ' + slug + '.');
 	const posts = (await response.json()) as Array<WordPressPost & { content: { rendered: string } }>;
@@ -212,9 +211,7 @@ export type WordPressCourse = {
 export async function getCourses(fetcher: typeof fetch): Promise<WordPressCourse[]> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await fetcher(base + '/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf', {
-		headers: { Accept: 'application/json' }
-	});
+	const response = await wordpressFetch(base + '/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf', fetcher);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for courses.');
 	return (await response.json()) as WordPressCourse[];
 }
@@ -222,9 +219,9 @@ export async function getCourses(fetcher: typeof fetch): Promise<WordPressCourse
 export async function getCourse(slug: string, fetcher: typeof fetch): Promise<WordPressCourse> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await fetcher(
+	const response = await wordpressFetch(
 		base + '/courses?slug=' + encodeURIComponent(slug) + '&_fields=id,slug,title,content,excerpt,featured_media,acf',
-		{ headers: { Accept: 'application/json' } }
+		fetcher
 	);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for course ' + slug + '.');
 	const courses = (await response.json()) as WordPressCourse[];
