@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
-import { getCourse } from '$lib/server/wordpress';
+import { resolveSeo, getCourse } from '$lib/server/wordpress';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
-	return { course: await getCourse(params.slug, fetch) };
+	const course = await getCourse(params.slug, fetch);
+	return { course, seo: await resolveSeo(course.acf, fetch) };
 };

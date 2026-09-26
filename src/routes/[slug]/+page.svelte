@@ -6,11 +6,6 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-	<title>{data.title} | P R Rajeev</title>
-	<meta name="description" content={'Learn about ' + data.title.toLowerCase() + ' with P R Rajeev.'} />
-</svelte:head>
-
 <Section>
 	<Container width="narrow">
 		<article class="service">

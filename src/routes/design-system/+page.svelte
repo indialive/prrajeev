@@ -12,11 +12,6 @@
 	];
 </script>
 
-<svelte:head>
-	<title>Design system preview | P R Rajeev</title>
-	<meta name="robots" content="noindex, nofollow" />
-</svelte:head>
-
 <Section>
 	<Container>
 		<div class="preview">

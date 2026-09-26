@@ -6,10 +6,6 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-	<title>{data.post.title.rendered} | P R Rajeev</title>
-</svelte:head>
-
 <Section>
 	<Container width="narrow">
 		<article class="article">

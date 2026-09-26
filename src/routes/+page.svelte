@@ -10,15 +10,6 @@
 	let hasNow = $derived(Boolean(home.now_learning || home.now_making || home.now_listening));
 </script>
 
-<svelte:head>
-	<title>{site.brand_name || 'P R Rajeev'} - ServiceNow developer and mentor</title>
-	<meta
-		name="description"
-		content={home.hero_intro ||
-			'ServiceNow development, mentorship and technical consultation with P R Rajeev.'}
-	/>
-</svelte:head>
-
 <Section>
 	<Container>
 		<div class="home">
@@ -33,6 +24,8 @@
 						<img
 							class="home__portrait"
 							src={portrait?.url}
+							srcset={portrait?.srcset}
+							sizes="(max-width: 52rem) 40vw, 280px"
 							alt={portrait?.alt || 'Portrait of P R Rajeev'}
 							width={portrait?.width || 144}
 							height={portrait?.height || 144}
@@ -51,7 +44,7 @@
 						<p class="home-card__eyebrow">Mentorship</p>
 						<h3>{home.mentorship_heading || 'Learning ServiceNow?'}</h3>
 						{#if home.mentorship_summary}<p>{home.mentorship_summary}</p>{/if}
-						<a href="/mentorship">Learn with me <span aria-hidden="true">&#8599;</span></a>
+						<a href="/courses">Learn with me <span aria-hidden="true">&#8599;</span></a>
 					</article>
 					<article class="home-card">
 						<p class="home-card__eyebrow">Technical consultation</p>

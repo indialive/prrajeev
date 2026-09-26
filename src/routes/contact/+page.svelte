@@ -19,11 +19,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Contact | P R Rajeev</title>
-	<meta name="description" content={data.contact.intro || 'Contact P R Rajeev about mentorship or technical consultation.'} />
-</svelte:head>
-
 <Section>
 	<Container>
 		<div class="contact">

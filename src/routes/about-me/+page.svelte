@@ -7,11 +7,6 @@
 	let content = $derived(data.about);
 </script>
 
-<svelte:head>
-	<title>About me | P R Rajeev</title>
-	<meta name="description" content={content.intro || 'About P R Rajeev and his ServiceNow work.'} />
-</svelte:head>
-
 <Section>
 	<Container>
 		<article class="about">

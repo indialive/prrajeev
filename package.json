@@ -13,6 +13,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"gen": "wrangler types",
+		"test": "node --test tests/wordpress-cache.test.mjs tests/seo.test.mjs tests/cms-seo.test.mjs",
 		"test:cache": "node --test tests/wordpress-cache.test.mjs"
 	},
 	"devDependencies": {

@@ -6,6 +6,8 @@
 
 	type Props = { site: SiteFields; children: Snippet };
 	let { site, children }: Props = $props();
+	let brandImage = $derived(site.avatar || site.site_logo || undefined);
+	let failedImageUrl = $state<string>();
 	let menuOpen = $state(false);
 
 	const fallbackMenu: MenuItem[] = [
@@ -41,7 +43,15 @@
 
 <header class="site-header">
 	<a class="site-header__brand" href="/" aria-label="P R Rajeev, home">
-		<span class="site-header__mark" aria-hidden="true">PR</span>
+		<span class="site-header__mark" aria-hidden="true">
+			{#if brandImage?.url && failedImageUrl !== brandImage.url}
+				<img class="site-header__avatar" src={brandImage.url} srcset={brandImage.srcset}
+					sizes="40px" alt="" width={brandImage.width || 40} height={brandImage.height || 40}
+					onerror={() => (failedImageUrl = brandImage?.url)} />
+			{:else}
+				PR
+			{/if}
+		</span>
 		<span class="site-header__name">{site.brand_name || 'P R Rajeev'}</span>
 	</a>
 
@@ -179,6 +189,13 @@
 			background: linear-gradient(135deg, var(--aqua), var(--primary-light));
 			color: var(--primary-dark);
 			font-size: var(--font-size-meta);
+		}
+		.site-header__avatar {
+			display: block;
+			inline-size: 100%;
+			block-size: 100%;
+			object-fit: cover;
+			border-radius: inherit;
 		}
 		.site-header__name {
 			white-space: nowrap;

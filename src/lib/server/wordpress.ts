@@ -1,3 +1,4 @@
+import { error, isHttpError } from '@sveltejs/kit';
 import { wordpressFetch } from './wordpress-cache';
 import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
@@ -10,6 +11,20 @@ export type WordPressImage = {
 	height?: number;
 };
 
+export type SeoFields = {
+	seo_title?: string | null | false;
+	seo_description?: string | null | false;
+	seo_image?: unknown;
+};
+export async function resolveSeo(fields: SeoFields | undefined, fetcher: typeof fetch) {
+	const text = (value: unknown) =>
+		typeof value === 'string' ? value.trim() || undefined : undefined;
+	return {
+		title: text(fields?.seo_title),
+		description: text(fields?.seo_description),
+		image: await resolveImage(fields?.seo_image, fetcher, 'large')
+	};
+}
 export type MenuItem = {
 	section: 'primary' | 'help';
 	label: string;
@@ -27,6 +42,12 @@ export type SiteFields = {
 	whatsapp_url?: string;
 	footer_note?: string;
 	menu_items?: MenuItem[];
+};
+
+export type RawSiteFields = Omit<SiteFields, 'avatar' | 'site_logo' | 'portrait'> & {
+	avatar?: WordPressImage | number | string | null | false;
+	site_logo?: WordPressImage | number | string | null | false;
+	portrait?: WordPressImage | number | string | null | false;
 };
 
 export type HomeFields = {
@@ -48,7 +69,7 @@ export type WordPressPage<T> = {
 	slug: string;
 	title: { rendered: string };
 	content: { rendered: string };
-	acf: T;
+	acf: T & SeoFields;
 };
 
 export const previewSite: SiteFields = {
@@ -80,7 +101,27 @@ export const previewHome: HomeFields = {
 };
 function apiBase(): string | undefined {
 	const configured = env.WORDPRESS_API_URL?.trim();
-	return (configured || (dev ? undefined : 'https://cms.prrajeev.com/wp-json/wp/v2'))?.replace(/\/+$/, '');
+	return (configured || (dev ? undefined : 'https://cms.prrajeev.com/wp-json/wp/v2'))?.replace(
+		/\/+$/,
+		''
+	);
+}
+
+export async function getSiteIcon(fetcher: typeof fetch): Promise<string | undefined> {
+	const base = apiBase();
+	if (!base) return undefined;
+	const root = base.replace(/\/wp\/v2$/, '');
+	try {
+		const response = await wordpressFetch(root + '?_fields=site_icon_url', fetcher);
+		if (!response.ok) return undefined;
+		const settings = (await response.json()) as { site_icon_url?: string };
+		const url = settings.site_icon_url;
+		if (!url) return undefined;
+		return ['https:', 'http:'].includes(new URL(url).protocol) ? url : undefined;
+	} catch (cause) {
+		if (isHttpError(cause, 503) || cause instanceof TypeError) return undefined;
+		throw cause;
+	}
 }
 
 export function hasWordPress(): boolean {
@@ -101,7 +142,7 @@ export async function getPage<T>(slug: string, fetcher: typeof fetch): Promise<W
 
 	const pages = (await response.json()) as WordPressPage<T>[];
 	if (!pages[0]) {
-		throw new Error(`Published WordPress page "${slug}" was not found.`);
+		error(404, 'Page not found');
 	}
 	return pages[0];
 }
@@ -111,6 +152,7 @@ export function usePreviewContent(): boolean {
 }
 
 export type WordPressPost = {
+	acf?: SeoFields;
 	id: number;
 	slug: string;
 	date: string;
@@ -121,7 +163,10 @@ export type WordPressPost = {
 export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await wordpressFetch(base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt', fetcher);
+	const response = await wordpressFetch(
+		base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt',
+		fetcher
+	);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for articles.');
 	return (await response.json()) as WordPressPost[];
 }
@@ -152,18 +197,45 @@ type MediaResponse = {
 	};
 };
 
-export async function resolveImage(value: unknown, fetcher: typeof fetch, size: 'medium' | 'large' = 'medium'): Promise<WordPressImage | false> {
+export async function resolveImage(
+	value: unknown,
+	fetcher: typeof fetch,
+	size: 'medium' | 'large' = 'medium'
+): Promise<WordPressImage | false> {
 	if (!value) return false;
-	if (typeof value === 'object' && 'url' in value) return value as WordPressImage;
-	if (typeof value !== 'number') return false;
+	if (typeof value === 'string') return value.trim() ? { url: value.trim() } : false;
+	if (typeof value === 'object') {
+		const image = value as WordPressImage & { ID?: number; id?: number };
+		if (typeof image.url === 'string' && image.url.trim())
+			return { ...image, url: image.url.trim() };
+		value = image.ID || image.id;
+	}
+	if (typeof value !== 'number' || !Number.isSafeInteger(value) || value <= 0) return false;
 	const base = apiBase();
 	if (!base) return false;
-	const response = await wordpressFetch(base + '/media/' + value + '?_fields=source_url,alt_text,media_details', fetcher);
-	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for media ' + value + '.');
-	const media = (await response.json()) as MediaResponse;
-	const preferred = media.media_details?.sizes?.[size] ?? media.media_details?.sizes?.medium ?? media.media_details?.sizes?.thumbnail;
-	const variants = [...Object.values(media.media_details?.sizes ?? {}), { source_url: media.source_url, width: media.media_details?.width || 0 }];
-	const srcset = variants.filter((item) => item.width > 0).map((item) => item.source_url + ' ' + item.width + 'w').join(', ');
+	let media: MediaResponse;
+	try {
+		media = await getMedia(base, value, fetcher);
+	} catch (cause) {
+		if (isHttpError(cause, 503)) return false;
+		throw cause;
+	}
+	if (!media.source_url) return false;
+	const preferred =
+		media.media_details?.sizes?.[size] ??
+		media.media_details?.sizes?.medium ??
+		media.media_details?.sizes?.thumbnail;
+	const variants = [
+		...Object.values(media.media_details?.sizes ?? {}),
+		{ source_url: media.source_url, width: media.media_details?.width || 0 }
+	];
+	const srcset = variants
+		.filter(
+			(item, index, all) =>
+				item.width > 0 && all.findIndex((other) => other.width === item.width) === index
+		)
+		.map((item) => item.source_url + ' ' + item.width + 'w')
+		.join(', ');
 	return {
 		url: preferred?.source_url || media.source_url,
 		srcset: srcset || undefined,
@@ -173,16 +245,39 @@ export async function resolveImage(value: unknown, fetcher: typeof fetch, size: 
 	};
 }
 
-export async function getPost(slug: string, fetcher: typeof fetch): Promise<WordPressPost & { content: { rendered: string } }> {
+// Share pending and completed media lookups within each request-scoped fetch.
+const mediaRequests = new WeakMap<typeof fetch, Map<string, Promise<MediaResponse>>>();
+function getMedia(base: string, id: number, fetcher: typeof fetch): Promise<MediaResponse> {
+	let requests = mediaRequests.get(fetcher);
+	if (!requests) mediaRequests.set(fetcher, (requests = new Map()));
+	const url = base + '/media/' + id + '?_fields=source_url,alt_text,media_details';
+	let pending = requests.get(url);
+	if (!pending) {
+		pending = wordpressFetch(url, fetcher).then(async (response) => {
+			if (!response.ok) throw new Error('WordPress media request failed: ' + response.status);
+			return (await response.json()) as MediaResponse;
+		});
+		requests.set(url, pending);
+	}
+	return pending;
+}
+export async function getPost(
+	slug: string,
+	fetcher: typeof fetch
+): Promise<WordPressPost & { content: { rendered: string } }> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
 	const response = await wordpressFetch(
-		base + '/posts?slug=' + encodeURIComponent(slug) + '&_fields=id,slug,date,title,excerpt,content',
+		base +
+			'/posts?slug=' +
+			encodeURIComponent(slug) +
+			'&_fields=id,slug,date,title,excerpt,content,acf',
 		fetcher
 	);
-	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for article ' + slug + '.');
+	if (!response.ok)
+		throw new Error('WordPress returned ' + response.status + ' for article ' + slug + '.');
 	const posts = (await response.json()) as Array<WordPressPost & { content: { rendered: string } }>;
-	if (!posts[0]) throw new Error('Published article "' + slug + '" was not found.');
+	if (!posts[0]) error(404, 'Article not found');
 	return posts[0];
 }
 export type CourseFields = {
@@ -205,13 +300,16 @@ export type WordPressCourse = {
 	excerpt: { rendered: string };
 	featured_media?: number;
 	image?: WordPressImage | false;
-	acf: CourseFields;
+	acf: CourseFields & SeoFields;
 };
 
 export async function getCourses(fetcher: typeof fetch): Promise<WordPressCourse[]> {
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await wordpressFetch(base + '/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf', fetcher);
+	const response = await wordpressFetch(
+		base + '/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf',
+		fetcher
+	);
 	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for courses.');
 	return (await response.json()) as WordPressCourse[];
 }
@@ -220,11 +318,15 @@ export async function getCourse(slug: string, fetcher: typeof fetch): Promise<Wo
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
 	const response = await wordpressFetch(
-		base + '/courses?slug=' + encodeURIComponent(slug) + '&_fields=id,slug,title,content,excerpt,featured_media,acf',
+		base +
+			'/courses?slug=' +
+			encodeURIComponent(slug) +
+			'&_fields=id,slug,title,content,excerpt,featured_media,acf',
 		fetcher
 	);
-	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for course ' + slug + '.');
+	if (!response.ok)
+		throw new Error('WordPress returned ' + response.status + ' for course ' + slug + '.');
 	const courses = (await response.json()) as WordPressCourse[];
-	if (!courses[0]) throw new Error('Published course "' + slug + '" was not found.');
+	if (!courses[0]) error(404, 'Course not found');
 	return { ...courses[0], image: await resolveImage(courses[0].featured_media, fetcher, 'large') };
 }

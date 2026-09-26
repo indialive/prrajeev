@@ -21,11 +21,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>{course.title.rendered} | P R Rajeev</title>
-	<meta name="description" content={fields.short_intro || 'ServiceNow course information.'} />
-</svelte:head>
-
 <Section>
 	<Container>
 		<article class="course">
