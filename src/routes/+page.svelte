@@ -27,7 +27,7 @@
 							class="home__portrait"
 							src={portrait?.url}
 							srcset={portrait?.srcset}
-							sizes="(max-width: 52rem) 40vw, 280px"
+							sizes="(max-width: 52rem) 40vw, 17.5rem"
 							alt={portrait?.alt || 'Portrait of P R Rajeev'}
 							width={portrait?.width || 144}
 							height={portrait?.height || 144}
@@ -76,7 +76,7 @@
 								class="home-feature__image"
 								src={featured.image.url}
 								srcset={featured.image.srcset}
-								sizes="(max-width: 48rem) calc(100vw - 48px), 760px"
+								sizes="auto, (max-width: 48rem) calc(100vw - 3rem), 47.5rem"
 								width={featured.image.width}
 								height={featured.image.height}
 								alt={featured.image.alt || ''}
@@ -266,14 +266,22 @@
 			font-family: var(--font-heading);
 			font-size: var(--h2);
 		}
+		.home__help {
+			container: home-help / inline-size;
+		}
 		.home__help h2 {
 			margin-block-end: var(--space-m);
 			font-size: var(--h3);
 		}
 		.home__cards {
 			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-columns: 1fr;
 			gap: var(--space-m);
+		}
+		@container home-help (min-width: 45rem) {
+			.home__cards {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
 		}
 		.home-card {
 			display: grid;
@@ -511,109 +519,8 @@
 			.home__portrait-feature::after {
 				transform: translate(0.3rem, -0.15rem) rotate(7deg);
 			}
-			.home__cards,
 			.home-card {
 				min-block-size: 0;
-			}
-			.home__now-grid svg {
-				inline-size: var(--home-now-icon-size);
-				block-size: var(--home-now-icon-size);
-				color: var(--aqua);
-				flex: none;
-			}
-			.home__now h2 {
-				font-size: var(--home-now-heading);
-			}
-			.home__journal {
-				container-type: inline-size;
-				display: grid;
-				gap: var(--space-xl);
-			}
-			.home__journal-header {
-				display: flex;
-				justify-content: space-between;
-				align-items: end;
-				gap: var(--space-m);
-			}
-			.home__journal a {
-				color: var(--text-link);
-				text-decoration: none;
-			}
-			.home__journal a:hover {
-				text-decoration: underline;
-			}
-			.home-feature {
-				display: grid;
-				grid-template-columns: repeat(16, minmax(0, 1fr));
-				align-items: start;
-			}
-			.home-feature__image {
-				grid-column: 1 / 12;
-				grid-row: 1;
-				inline-size: 100%;
-				aspect-ratio: var(--home-feature-image-ratio);
-				object-fit: cover;
-				border-radius: var(--radius-m);
-			}
-			.home-feature__story {
-				position: relative;
-				grid-column: 10 / -1;
-				grid-row: 1;
-				margin-block-start: var(--home-feature-offset);
-				display: grid;
-				gap: var(--home-feature-gap);
-				padding-block-start: var(--home-feature-padding);
-				padding-inline-start: var(--home-feature-padding);
-				border-block-start: var(--border-width) solid var(--home-feature-border);
-				border-inline-start: var(--border-width) solid var(--home-feature-border);
-				border-start-start-radius: var(--radius-l);
-				background: var(--primary-dark);
-			}
-			.home-feature__eyebrow {
-				color: var(--aqua);
-				font-size: var(--font-size-meta);
-				letter-spacing: 0.08em;
-				text-transform: uppercase;
-			}
-			.home-feature h3 {
-				font-size: var(--home-feature-heading);
-				line-height: 1.08;
-				overflow-wrap: anywhere;
-			}
-			.home-feature__excerpt {
-				color: var(--text-body);
-			}
-			.home-feature__story a {
-				padding-block-start: var(--space-xs);
-				font-weight: var(--weight-semibold);
-			}
-			.home-feature[data-image='false'] .home-feature__story {
-				grid-column: 1 / -1;
-				margin-block-start: 0;
-				padding: var(--space-l);
-			}
-			@container (max-width: 45rem) {
-				.home__journal-header {
-					flex-direction: column;
-					align-items: start;
-				}
-				.home-feature {
-					grid-template-columns: 1fr;
-				}
-				.home-feature__image {
-					grid-column: 1;
-					grid-row: auto;
-					aspect-ratio: var(--home-feature-mobile-ratio);
-				}
-				.home-feature__story {
-					grid-column: 1;
-					grid-row: auto;
-					margin-block-start: calc(-1 * var(--home-feature-overlap));
-					padding: var(--home-now-gap) var(--home-feature-mobile-padding)
-						var(--home-feature-mobile-padding);
-					border-inline-start: 0;
-					border-start-end-radius: var(--radius-l);
-				}
 			}
 			.home__contact {
 				align-items: flex-start;
