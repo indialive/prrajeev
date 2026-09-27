@@ -70,7 +70,10 @@
 
 			{#if hasNow}
 				<section class="home__now" aria-labelledby="now-title">
-					<h2 id="now-title">These days</h2>
+					<div class="home__now-header">
+						<h2 id="now-title">These days</h2>
+						<p class="home__eyebrow">A note from my desk</p>
+					</div>
 					<div class="home__now-grid">
 						{#if home.now_learning}
 							<div>
@@ -191,9 +194,7 @@
 			font-family: var(--font-heading);
 			font-size: var(--h2);
 		}
-		.home__help h2,
-		.home__writing h2,
-		.home__now h2 {
+		.home__help h2 {
 			margin-block-end: var(--space-m);
 			font-size: var(--h3);
 		}
@@ -246,14 +247,56 @@
 			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
 			gap: var(--space-l);
 		}
-		.home__writing p {
-			margin-block-end: var(--space-s);
+		.home__writing h2,
+		.home__now h2 {
+			font-size: var(--h2);
+		}
+		.home__writing > div {
+			display: grid;
+			align-content: start;
+			gap: var(--space-s);
+		}
+		.home__writing .home__eyebrow {
+			margin-block-end: 0;
+		}
+		.home__now {
+			container-type: inline-size;
+			display: grid;
+			gap: var(--space-m);
+			padding: var(--home-now-padding);
+			border-radius: var(--radius-m);
+			background: var(--home-now-background);
+		}
+		.home__now-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--space-s);
+		}
+		.home__now-header .home__eyebrow {
+			margin-block-end: 0;
 		}
 
 		.home__now-grid {
 			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--home-now-column-width)), 1fr));
 			gap: var(--space-m);
+		}
+		.home__now-grid > div {
+			display: grid;
+			align-content: start;
+			gap: var(--space-xs);
+		}
+		@container (max-width: 45rem) {
+			.home__now-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+		@container (max-width: 30rem) {
+			.home__now-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
 		}
 		.home__now-grid span {
 			color: var(--text-muted);
@@ -265,6 +308,10 @@
 			align-items: center;
 			justify-content: space-between;
 			gap: var(--space-m);
+		}
+		.home__contact > div {
+			display: grid;
+			gap: var(--space-xs);
 		}
 		.home__contact h2 {
 			font-size: var(--h5);
@@ -298,8 +345,7 @@
 				transform: translate(0.3rem, -0.15rem) rotate(7deg);
 			}
 			.home__cards,
-			.home__writing,
-			.home__now-grid {
+			.home__writing {
 				grid-template-columns: 1fr;
 			}
 			.home-card {

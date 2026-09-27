@@ -83,7 +83,9 @@
 		--home-portrait-size-tablet: 6rem;
 		--home-portrait-height-tablet: 6.75rem;
 		--home-portrait-frame-size-tablet: 7.5rem;
-		--home-section-gap: var(--section-space-m);
+		--home-section-gap: var(--space-xl);
+		--home-now-padding: var(--section-divider-padding);
+		--home-now-column-width: 14rem;
 	}
 
 	:root,
@@ -96,6 +98,7 @@
 		--text-link-hover: color-mix(in oklch, var(--aqua) 78%, var(--white));
 		--surface-page: var(--neutral-page);
 		--surface-raised: var(--neutral-raised);
+		--home-now-background: var(--primary);
 		--surface-accent: oklch(32% 0.06 237 / 0.8);
 		--border-default: var(--neutral-border);
 		--border-strong: color-mix(in oklch, var(--neutral-border) 72%, var(--primary-light));
