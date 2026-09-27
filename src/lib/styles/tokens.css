@@ -83,7 +83,7 @@
 		--home-portrait-size-tablet: 6rem;
 		--home-portrait-height-tablet: 6.75rem;
 		--home-portrait-frame-size-tablet: 7.5rem;
-		--home-section-gap: var(--space-xl);
+		--home-section-gap: var(--section-space-l);
 		--home-now-padding: clamp(1.5rem, 1.412rem + 0.376vw, 1.75rem);
 		--home-now-inset: 0.5rem;
 		--home-now-radius: 1.25rem;
@@ -122,6 +122,7 @@
 		--surface-page: var(--neutral-page);
 		--surface-raised: var(--neutral-raised);
 		--home-now-background: var(--primary);
+		--home-journal-background: var(--primary-dark);
 		--surface-accent: oklch(32% 0.06 237 / 0.8);
 		--border-default: var(--neutral-border);
 		--border-strong: color-mix(in oklch, var(--neutral-border) 72%, var(--primary-light));

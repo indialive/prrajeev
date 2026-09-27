@@ -102,7 +102,7 @@
 				<section class="home__now" aria-labelledby="now-title">
 					<div class="home__now-header">
 						<h2 id="now-title">These days</h2>
-						<p class="home__eyebrow">A note from my desk</p>
+						<p class="home__now-lede">A note from my desk</p>
 					</div>
 					<div class="home__now-card">
 						<div class="home__now-inner">
@@ -347,8 +347,9 @@
 			display: grid;
 			gap: var(--space-xs);
 		}
-		.home__now-header .home__eyebrow {
-			margin-block-end: 0;
+		.home__now-lede {
+			color: var(--text-muted);
+			font-size: var(--font-size-small);
 		}
 
 		.home__now-grid {
@@ -384,9 +385,23 @@
 			font-size: var(--home-now-heading);
 		}
 		.home__journal {
+			position: relative;
+			isolation: isolate;
+			padding-block: var(--section-space-m);
 			container-type: inline-size;
 			display: grid;
 			gap: var(--space-xl);
+		}
+		.home__journal::before {
+			position: absolute;
+			inset-block: 0;
+			inset-inline: calc(-1 * var(--space-m));
+			z-index: -1;
+			background: var(--home-journal-background);
+			content: '';
+		}
+		.home__journal-header h2 {
+			font-size: var(--h1);
 		}
 		.home__journal-header {
 			display: flex;
@@ -426,7 +441,7 @@
 			border-block-start: var(--border-width) solid var(--home-feature-border);
 			border-inline-start: var(--border-width) solid var(--home-feature-border);
 			border-start-start-radius: var(--radius-l);
-			background: var(--primary-dark);
+			background: var(--home-journal-background);
 		}
 		.home-feature__eyebrow {
 			color: var(--aqua);
@@ -475,6 +490,7 @@
 			}
 		}
 		.home__contact {
+			padding-block: var(--section-space-s);
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
