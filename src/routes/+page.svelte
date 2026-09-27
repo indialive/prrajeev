@@ -188,13 +188,7 @@
 													allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
 													allowfullscreen
 													loading="lazy"
-
-												></iframe><!-- eslint-disable svelte/no-navigation-without-resolve -- validated Spotify external URL --><a
-													class="home__spotify-fallback"
-													href={now.listening.embedUrl.replace('/embed/', '/')}
-													>Listen on Spotify <span aria-hidden="true">&#8599;</span></a
-												>
-												<!-- eslint-enable svelte/no-navigation-without-resolve -->
+												></iframe>
 											</div>{/if}
 									</div>
 								{/if}
@@ -414,15 +408,7 @@
 			align-self: start;
 		}
 		.home__listening-player {
-			container-type: inline-size;
 			min-inline-size: 0;
-		}
-		.home__spotify-fallback {
-			display: none;
-			padding: var(--space-s);
-			min-block-size: var(--control-min-size);
-			border-radius: var(--radius-l);
-			background: var(--home-widget-background);
 		}
 		.home__spotify {
 			display: block;
@@ -432,15 +418,7 @@
 			border-radius: var(--radius-l);
 			background: var(--home-widget-background);
 		}
-		@container (max-width: 18.75rem) {
-			.home__spotify {
-				display: none;
-			}
-			.home__spotify-fallback {
-				display: block;
-			}
-		}
-		@container (max-width: 45rem) {
+		@container (max-width: 66rem) {
 			.home__now-grid > div {
 				grid-template-rows: none;
 			}
@@ -674,6 +652,15 @@
 			}
 		}
 		@media (max-width: 30rem) {
+			.home__now-card {
+				margin-inline: max(
+					calc(-1 * var(--gutter)),
+					min(0rem, calc((100% - var(--home-spotify-min-width)) / 2))
+				);
+			}
+			.home__listening-player {
+				margin-inline: calc(-1 * (var(--home-now-padding) + var(--home-now-inset)));
+			}
 			.home__portrait-feature {
 				display: none;
 			}

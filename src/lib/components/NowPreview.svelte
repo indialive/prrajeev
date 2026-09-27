@@ -124,5 +124,13 @@
 			color: var(--text-link);
 			text-decoration: underline;
 		}
+		@media (max-width: 30rem) {
+			.now-preview__image {
+				display: none;
+			}
+			.now-preview {
+				padding: var(--space-s);
+			}
+		}
 	}
 </style>

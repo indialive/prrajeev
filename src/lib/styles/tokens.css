@@ -94,6 +94,7 @@
 		--home-now-icon-size: 1.125rem;
 		--home-widget-height: 5rem;
 		--home-spotify-height: 9.5rem;
+		--home-spotify-min-width: 19rem;
 		--home-widget-image-size: 3rem;
 		--home-widget-background: oklch(20.104% 0.02095 239.55);
 		--list-symbol-size: 1em;
