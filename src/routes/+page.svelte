@@ -84,12 +84,25 @@
 							/>
 						{/if}
 						<div class="home-feature__story">
-							<p class="home-feature__eyebrow">From the journal</p>
+							<p class="home-feature__eyebrow">Featured article</p>
 							<h3>{featured.title}</h3>
 							{#if featured.excerpt}<p class="home-feature__excerpt">{featured.excerpt}</p>{/if}
-							<a href={resolve('/articles/[slug]', { slug: featured.slug })}
-								>Read the article <span aria-hidden="true">&#8599;</span></a
+							<a
+								class="home-feature__action"
+								href={resolve('/articles/[slug]', { slug: featured.slug })}
 							>
+								<span class="home-feature__action-label">Read article</span>
+								<span class="home-feature__action-icon" aria-hidden="true"
+									><svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.7"
+										stroke-linecap="round"
+										stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg
+									></span
+								>
+							</a>
 						</div>
 					</article>
 				{:else if home.writing_note}
@@ -461,12 +474,23 @@
 			margin-block-start: var(--home-feature-offset);
 			display: grid;
 			gap: var(--home-feature-gap);
-			padding-block-start: var(--home-feature-padding);
+			padding-block: var(--home-feature-padding);
+			padding-inline-end: var(--space-m);
+			isolation: isolate;
 			padding-inline-start: var(--home-feature-padding);
 			border-block-start: var(--border-width) solid var(--home-feature-border);
 			border-inline-start: var(--border-width) solid var(--home-feature-border);
 			border-start-start-radius: var(--radius-l);
 			background: var(--home-journal-background);
+		}
+		.home-feature__story::before {
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+			border-radius: inherit;
+			background: var(--home-card-highlight);
+			content: '';
+			pointer-events: none;
 		}
 		.home-feature__eyebrow {
 			color: var(--aqua);
@@ -482,9 +506,37 @@
 		.home-feature__excerpt {
 			color: var(--text-body);
 		}
-		.home-feature__story a {
-			padding-block-start: var(--space-xs);
+		.home-feature__action {
+			display: inline-flex;
+			align-items: center;
+			justify-self: start;
+			gap: var(--space-s);
+			min-block-size: var(--control-min-size);
+			font-size: var(--font-size-small);
 			font-weight: var(--weight-semibold);
+		}
+		.home-feature__action-icon {
+			display: grid;
+			place-items: center;
+			inline-size: var(--space-l);
+			block-size: var(--space-l);
+			flex: none;
+			border-radius: 50%;
+			background: var(--home-reading-action-background);
+			transition: background var(--duration-fast) var(--ease-default);
+		}
+		.home-feature__action-icon svg {
+			inline-size: 1em;
+			block-size: 1em;
+		}
+		.home-feature__action:is(:hover, :focus-visible) {
+			text-decoration: none;
+		}
+		.home-feature__action:is(:hover, :focus-visible) .home-feature__action-label {
+			text-decoration: underline;
+		}
+		.home-feature__action:is(:hover, :focus-visible) .home-feature__action-icon {
+			background: var(--home-reading-action-background-hover);
 		}
 		.home-feature[data-image='false'] .home-feature__story {
 			grid-column: 1 / -1;

@@ -16,7 +16,13 @@ export async function getFeaturedArticle(fetcher: typeof fetch) {
 			id: post.id,
 			slug: post.slug,
 			title: plainText(post.title.rendered),
-			excerpt: words.length > 15 ? words.slice(0, 15).join(' ') + '…' : excerpt,
+			excerpt:
+				words.length > 15
+					? words
+							.slice(0, 15)
+							.join(' ')
+							.replace(/[,:;.!?]+$/, '') + '\u2026'
+					: excerpt,
 			image: (await resolveImage(post.featured_media, fetcher, 'large')) || undefined
 		};
 	} catch (cause) {

@@ -65,6 +65,7 @@
 		--radius-m: 0.5rem;
 		--radius-l: 0.75rem;
 		--border-width: 1px;
+		--control-min-size: 2.75rem;
 		--duration-fast: 150ms;
 		--ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
 		--focus-ring-width: 2px;
@@ -101,6 +102,8 @@
 		--home-glass-border: color-mix(in oklch, var(--aqua) 10%, transparent);
 		--home-feature-heading: var(--h3);
 		--home-feature-gap: 1.25rem;
+		--home-reading-action-background: color-mix(in oklch, var(--aqua) 9%, transparent);
+		--home-reading-action-background-hover: color-mix(in oklch, var(--aqua) 18%, transparent);
 		--home-feature-overlap: 1.5rem;
 		--home-feature-offset: 6rem;
 		--home-feature-padding: 2.25rem;
