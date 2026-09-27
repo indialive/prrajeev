@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import Container from '$lib/components/Container.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	let featured = $derived(data.featuredArticle);
 	let home = $derived(data.home);
 	let site = $derived(data.site);
 	let portrait = $derived(site.portrait || site.avatar || undefined);
@@ -44,55 +46,125 @@
 						<p class="home-card__eyebrow">Mentorship</p>
 						<h3>{home.mentorship_heading || 'Learning ServiceNow?'}</h3>
 						{#if home.mentorship_summary}<p>{home.mentorship_summary}</p>{/if}
-						<a href="/courses">Learn with me <span aria-hidden="true">&#8599;</span></a>
+						<a href={resolve('/courses')}>Learn with me <span aria-hidden="true">&#8599;</span></a>
 					</article>
 					<article class="home-card">
 						<p class="home-card__eyebrow">Technical consultation</p>
 						<h3>{home.consultation_heading || 'Working through a problem?'}</h3>
 						{#if home.consultation_summary}<p>{home.consultation_summary}</p>{/if}
-						<a href="/consultation">Talk it through <span aria-hidden="true">&#8599;</span></a>
+						<a href={resolve('/consultation')}
+							>Talk it through <span aria-hidden="true">&#8599;</span></a
+						>
 					</article>
 				</div>
 			</section>
 
-			{#if home.writing_note}
-				<section class="home__writing" aria-labelledby="writing-title">
+			<section class="home__journal" aria-labelledby="writing-title">
+				<header class="home__journal-header">
 					<div>
 						<p class="home__eyebrow">From my desk</p>
 						<h2 id="writing-title">Work & writing</h2>
 					</div>
-					<div>
-						<p>{home.writing_note}</p>
-						<a href="/articles">Read articles <span aria-hidden="true">&#8599;</span></a>
-					</div>
-				</section>
-			{/if}
-
+					<a href={resolve('/articles')}
+						>Explore the journal <span aria-hidden="true">&#8599;</span></a
+					>
+				</header>
+				{#if featured}
+					<article class="home-feature" data-image={Boolean(featured.image?.url)}>
+						{#if featured.image?.url}
+							<img
+								class="home-feature__image"
+								src={featured.image.url}
+								srcset={featured.image.srcset}
+								sizes="(max-width: 48rem) calc(100vw - 48px), 760px"
+								width={featured.image.width}
+								height={featured.image.height}
+								alt={featured.image.alt || ''}
+								loading="lazy"
+							/>
+						{/if}
+						<div class="home-feature__story">
+							<p class="home-feature__eyebrow">From the journal</p>
+							<h3>{featured.title}</h3>
+							{#if featured.excerpt}<p class="home-feature__excerpt">{featured.excerpt}</p>{/if}
+							<a href={resolve('/articles/[slug]', { slug: featured.slug })}
+								>Read the article <span aria-hidden="true">&#8599;</span></a
+							>
+						</div>
+					</article>
+				{:else if home.writing_note}
+					<p>{home.writing_note}</p>
+				{:else}
+					<p>Articles will appear here when they are published.</p>
+				{/if}
+			</section>
 			{#if hasNow}
 				<section class="home__now" aria-labelledby="now-title">
-					<div class="home__now-header">
-						<h2 id="now-title">These days</h2>
-						<p class="home__eyebrow">A note from my desk</p>
-					</div>
-					<div class="home__now-grid">
-						{#if home.now_learning}
-							<div>
-								<span>Learning</span>
-								<p>{home.now_learning}</p>
-							</div>
-						{/if}
-						{#if home.now_making}
-							<div>
-								<span>Making</span>
-								<p>{home.now_making}</p>
-							</div>
-						{/if}
-						{#if home.now_listening}
-							<div>
-								<span>Listening</span>
-								<p>{home.now_listening}</p>
-							</div>
-						{/if}
+					<div class="home__now-inner">
+						<div class="home__now-header">
+							<h2 id="now-title">These days</h2>
+							<p class="home__eyebrow">A note from my desk</p>
+						</div>
+						<div class="home__now-grid">
+							{#if home.now_learning}
+								<div>
+									<span
+										><svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.7"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"
+											><path
+												d="M12 5v15M3 4h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3z"
+											/></svg
+										>Learning</span
+									>
+									<p>{home.now_learning}</p>
+								</div>
+							{/if}
+							{#if home.now_making}
+								<div>
+									<span
+										><svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.7"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6" /></svg
+										>Making</span
+									>
+									<p>{home.now_making}</p>
+								</div>
+							{/if}
+							{#if home.now_listening}
+								<div>
+									<span
+										><svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="1.7"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"
+											><path d="M3 14v-3a9 9 0 0 1 18 0v3" /><rect
+												x="3"
+												y="12"
+												width="4"
+												height="9"
+												rx="2"
+											/><rect x="17" y="12" width="4" height="9" rx="2" /></svg
+										>Listening</span
+									>
+									<p>{home.now_listening}</p>
+								</div>
+							{/if}
+						</div>
 					</div>
 				</section>
 			{/if}
@@ -102,7 +174,7 @@
 					<h2 id="contact-title">Not sure which path fits?</h2>
 					<p>Just tell me a little about what you need help with. We can start there.</p>
 				</div>
-				<a href="/contact">Write to me <span aria-hidden="true">&#8599;</span></a>
+				<a href={resolve('/contact')}>Write to me <span aria-hidden="true">&#8599;</span></a>
 			</section>
 		</div>
 	</Container>
@@ -228,7 +300,6 @@
 			color: var(--text-body);
 		}
 		.home-card a,
-		.home__writing a,
 		.home__contact a {
 			color: var(--text-link);
 			font-weight: var(--weight-semibold);
@@ -238,34 +309,27 @@
 			margin-block-start: var(--space-s);
 		}
 		.home-card a:hover,
-		.home__writing a:hover,
 		.home__contact a:hover {
 			text-decoration: underline;
-		}
-		.home__writing {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-			gap: var(--space-l);
-		}
-		.home__writing h2,
-		.home__now h2 {
-			font-size: var(--h2);
-		}
-		.home__writing > div {
-			display: grid;
-			align-content: start;
-			gap: var(--space-s);
-		}
-		.home__writing .home__eyebrow {
-			margin-block-end: 0;
 		}
 		.home__now {
 			container-type: inline-size;
 			display: grid;
 			gap: var(--space-m);
+			padding: var(--home-now-inset);
+			border: var(--border-width) solid transparent;
+			border-radius: var(--home-now-radius);
+			background:
+				linear-gradient(var(--primary-dark), var(--primary-dark)) padding-box,
+				var(--home-glass-rim) border-box;
+		}
+		.home__now-inner {
+			display: grid;
+			gap: var(--home-now-gap);
 			padding: var(--home-now-padding);
-			border-radius: var(--radius-m);
-			background: var(--home-now-background);
+			border: var(--border-width) solid var(--home-glass-border);
+			border-radius: calc(var(--home-now-radius) - var(--home-now-inset));
+			background: color-mix(in oklch, var(--home-now-background) 91%, transparent);
 		}
 		.home__now-header {
 			display: flex;
@@ -279,13 +343,13 @@
 
 		.home__now-grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--home-now-column-width)), 1fr));
-			gap: var(--space-m);
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: var(--home-now-column-gap);
 		}
 		.home__now-grid > div {
 			display: grid;
 			align-content: start;
-			gap: var(--space-xs);
+			gap: var(--home-now-entry-gap);
 		}
 		@container (max-width: 45rem) {
 			.home__now-grid {
@@ -299,9 +363,112 @@
 			}
 		}
 		.home__now-grid span {
+			display: flex;
+			align-items: center;
+			gap: var(--space-xs);
 			color: var(--text-muted);
 			font-size: var(--font-size-meta);
 			text-transform: uppercase;
+		}
+		.home__now-grid svg {
+			inline-size: var(--home-now-icon-size);
+			block-size: var(--home-now-icon-size);
+			color: var(--aqua);
+			flex: none;
+		}
+		.home__now h2 {
+			font-size: var(--home-now-heading);
+		}
+		.home__journal {
+			container-type: inline-size;
+			display: grid;
+			gap: var(--space-xl);
+		}
+		.home__journal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: end;
+			gap: var(--home-now-column-gap);
+		}
+		.home__journal a {
+			color: var(--text-link);
+			text-decoration: none;
+		}
+		.home__journal a:hover {
+			text-decoration: underline;
+		}
+		.home-feature {
+			display: grid;
+			grid-template-columns: repeat(16, minmax(0, 1fr));
+			align-items: start;
+		}
+		.home-feature__image {
+			grid-column: 1 / 12;
+			grid-row: 1;
+			inline-size: 100%;
+			aspect-ratio: var(--home-feature-image-ratio);
+			object-fit: cover;
+			border-radius: var(--radius-m);
+		}
+		.home-feature__story {
+			position: relative;
+			grid-column: 10 / -1;
+			grid-row: 1;
+			margin-block-start: var(--home-feature-offset);
+			display: grid;
+			gap: var(--home-feature-gap);
+			padding-block-start: var(--home-feature-padding);
+			padding-inline-start: var(--home-feature-padding);
+			border-block-start: var(--border-width) solid var(--home-feature-border);
+			border-inline-start: var(--border-width) solid var(--home-feature-border);
+			border-start-start-radius: var(--radius-l);
+			background: var(--primary-dark);
+		}
+		.home-feature__eyebrow {
+			color: var(--aqua);
+			font-size: var(--font-size-meta);
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+		.home-feature h3 {
+			font-size: var(--home-feature-heading);
+			line-height: 1.08;
+			overflow-wrap: anywhere;
+		}
+		.home-feature__excerpt {
+			color: var(--text-body);
+		}
+		.home-feature__story a {
+			padding-block-start: var(--space-xs);
+			font-weight: var(--weight-semibold);
+		}
+		.home-feature[data-image='false'] .home-feature__story {
+			grid-column: 1 / -1;
+			margin-block-start: 0;
+			padding: var(--space-l);
+		}
+		@container (max-width: 45rem) {
+			.home__journal-header {
+				flex-direction: column;
+				align-items: start;
+			}
+			.home-feature {
+				grid-template-columns: 1fr;
+			}
+			.home-feature__image {
+				grid-column: 1;
+				grid-row: auto;
+				aspect-ratio: var(--home-feature-mobile-ratio);
+			}
+			.home-feature__story {
+				grid-column: 1;
+				grid-row: auto;
+				margin-block-start: calc(-1 * var(--home-feature-overlap));
+				padding: var(--home-now-gap) var(--home-feature-mobile-padding)
+					var(--home-feature-mobile-padding);
+				border-inline-start: 0;
+				border-start-end-radius: var(--radius-l);
+			}
 		}
 		.home__contact {
 			display: flex;
@@ -345,17 +512,108 @@
 				transform: translate(0.3rem, -0.15rem) rotate(7deg);
 			}
 			.home__cards,
-			.home__writing {
-				grid-template-columns: 1fr;
-			}
 			.home-card {
 				min-block-size: 0;
 			}
-			.home__writing {
-				gap: var(--space-s);
+			.home__now-grid svg {
+				inline-size: var(--home-now-icon-size);
+				block-size: var(--home-now-icon-size);
+				color: var(--aqua);
+				flex: none;
 			}
-			.home__writing h2 {
-				margin-block-end: 0;
+			.home__now h2 {
+				font-size: var(--home-now-heading);
+			}
+			.home__journal {
+				container-type: inline-size;
+				display: grid;
+				gap: var(--space-xl);
+			}
+			.home__journal-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: end;
+				gap: var(--space-m);
+			}
+			.home__journal a {
+				color: var(--text-link);
+				text-decoration: none;
+			}
+			.home__journal a:hover {
+				text-decoration: underline;
+			}
+			.home-feature {
+				display: grid;
+				grid-template-columns: repeat(16, minmax(0, 1fr));
+				align-items: start;
+			}
+			.home-feature__image {
+				grid-column: 1 / 12;
+				grid-row: 1;
+				inline-size: 100%;
+				aspect-ratio: var(--home-feature-image-ratio);
+				object-fit: cover;
+				border-radius: var(--radius-m);
+			}
+			.home-feature__story {
+				position: relative;
+				grid-column: 10 / -1;
+				grid-row: 1;
+				margin-block-start: var(--home-feature-offset);
+				display: grid;
+				gap: var(--home-feature-gap);
+				padding-block-start: var(--home-feature-padding);
+				padding-inline-start: var(--home-feature-padding);
+				border-block-start: var(--border-width) solid var(--home-feature-border);
+				border-inline-start: var(--border-width) solid var(--home-feature-border);
+				border-start-start-radius: var(--radius-l);
+				background: var(--primary-dark);
+			}
+			.home-feature__eyebrow {
+				color: var(--aqua);
+				font-size: var(--font-size-meta);
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+			.home-feature h3 {
+				font-size: var(--home-feature-heading);
+				line-height: 1.08;
+				overflow-wrap: anywhere;
+			}
+			.home-feature__excerpt {
+				color: var(--text-body);
+			}
+			.home-feature__story a {
+				padding-block-start: var(--space-xs);
+				font-weight: var(--weight-semibold);
+			}
+			.home-feature[data-image='false'] .home-feature__story {
+				grid-column: 1 / -1;
+				margin-block-start: 0;
+				padding: var(--space-l);
+			}
+			@container (max-width: 45rem) {
+				.home__journal-header {
+					flex-direction: column;
+					align-items: start;
+				}
+				.home-feature {
+					grid-template-columns: 1fr;
+				}
+				.home-feature__image {
+					grid-column: 1;
+					grid-row: auto;
+					aspect-ratio: var(--home-feature-mobile-ratio);
+				}
+				.home-feature__story {
+					grid-column: 1;
+					grid-row: auto;
+					margin-block-start: calc(-1 * var(--home-feature-overlap));
+					padding: var(--home-now-gap) var(--home-feature-mobile-padding)
+						var(--home-feature-mobile-padding);
+					border-inline-start: 0;
+					border-start-end-radius: var(--radius-l);
+				}
 			}
 			.home__contact {
 				align-items: flex-start;

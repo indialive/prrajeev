@@ -148,6 +148,7 @@ export function usePreviewContent(): boolean {
 }
 
 export type WordPressPost = {
+	featured_media?: number;
 	acf?: SeoFields;
 	id: number;
 	slug: string;
@@ -160,7 +161,7 @@ export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> 
 	const base = apiBase();
 	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
 	const response = await wordpressFetch(
-		base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt',
+		base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt,featured_media',
 		fetcher
 	);
 	return (await response.json()) as WordPressPost[];
