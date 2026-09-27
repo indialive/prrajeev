@@ -113,7 +113,6 @@ export async function getSiteIcon(fetcher: typeof fetch): Promise<string | undef
 	const root = base.replace(/\/wp\/v2$/, '');
 	try {
 		const response = await wordpressFetch(root + '?_fields=site_icon_url', fetcher);
-		if (!response.ok) return undefined;
 		const settings = (await response.json()) as { site_icon_url?: string };
 		const url = settings.site_icon_url;
 		if (!url) return undefined;
@@ -136,9 +135,6 @@ export async function getPage<T>(slug: string, fetcher: typeof fetch): Promise<W
 
 	const url = `${base}/pages?slug=${encodeURIComponent(slug)}&_fields=id,slug,title,content,acf`;
 	const response = await wordpressFetch(url, fetcher);
-	if (!response.ok) {
-		throw new Error(`WordPress returned ${response.status} for page ${slug}.`);
-	}
 
 	const pages = (await response.json()) as WordPressPage<T>[];
 	if (!pages[0]) {
@@ -167,7 +163,6 @@ export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> 
 		base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt',
 		fetcher
 	);
-	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for articles.');
 	return (await response.json()) as WordPressPost[];
 }
 export type AboutFields = {
@@ -254,7 +249,6 @@ function getMedia(base: string, id: number, fetcher: typeof fetch): Promise<Medi
 	let pending = requests.get(url);
 	if (!pending) {
 		pending = wordpressFetch(url, fetcher).then(async (response) => {
-			if (!response.ok) throw new Error('WordPress media request failed: ' + response.status);
 			return (await response.json()) as MediaResponse;
 		});
 		requests.set(url, pending);
@@ -274,8 +268,6 @@ export async function getPost(
 			'&_fields=id,slug,date,title,excerpt,content,acf',
 		fetcher
 	);
-	if (!response.ok)
-		throw new Error('WordPress returned ' + response.status + ' for article ' + slug + '.');
 	const posts = (await response.json()) as Array<WordPressPost & { content: { rendered: string } }>;
 	if (!posts[0]) error(404, 'Article not found');
 	return posts[0];
@@ -310,7 +302,6 @@ export async function getCourses(fetcher: typeof fetch): Promise<WordPressCourse
 		base + '/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf',
 		fetcher
 	);
-	if (!response.ok) throw new Error('WordPress returned ' + response.status + ' for courses.');
 	return (await response.json()) as WordPressCourse[];
 }
 
@@ -324,8 +315,6 @@ export async function getCourse(slug: string, fetcher: typeof fetch): Promise<Wo
 			'&_fields=id,slug,title,content,excerpt,featured_media,acf',
 		fetcher
 	);
-	if (!response.ok)
-		throw new Error('WordPress returned ' + response.status + ' for course ' + slug + '.');
 	const courses = (await response.json()) as WordPressCourse[];
 	if (!courses[0]) error(404, 'Course not found');
 	return { ...courses[0], image: await resolveImage(courses[0].featured_media, fetcher, 'large') };

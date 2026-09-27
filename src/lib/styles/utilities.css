@@ -1,6 +1,5 @@
 @layer utilities {
-	/* Preserve accessible names while hiding only their visual representation.
-	   For labels, not focusable controls or skip links. */
+	/* Hide text visually while keeping it accessible to screen readers. */
 	.visually-hidden {
 		position: absolute;
 		inline-size: 1px;

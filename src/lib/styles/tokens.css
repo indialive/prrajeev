@@ -1,4 +1,3 @@
-/* Dark editorial palette for prrajeev.com. Layout values remain aligned with Pen. */
 @layer tokens, reset, global, layouts, components, utilities;
 
 @layer tokens {
@@ -15,7 +14,7 @@
 		--neutral-muted: oklch(70.087% 0.01174 234.9);
 		--neutral-border: oklch(35% 0.028 237);
 
-		/* Atmospheric light for the shared page canvas. */
+		/* Page background gradients. */
 		--page-glow-blue: oklch(52% 0.12 242 / 0.48);
 		--page-glow-aqua: oklch(73% 0.09 199 / 0.24);
 		--page-glow-teal: oklch(54% 0.085 190 / 0.3);
