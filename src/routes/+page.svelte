@@ -100,70 +100,72 @@
 			</section>
 			{#if hasNow}
 				<section class="home__now" aria-labelledby="now-title">
-					<div class="home__now-inner">
-						<div class="home__now-header">
-							<h2 id="now-title">These days</h2>
-							<p class="home__eyebrow">A note from my desk</p>
-						</div>
-						<div class="home__now-grid">
-							{#if home.now_learning}
-								<div>
-									<span
-										><svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.7"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											aria-hidden="true"
-											><path
-												d="M12 5v15M3 4h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3z"
-											/></svg
-										>Learning</span
-									>
-									<p>{home.now_learning}</p>
-								</div>
-							{/if}
-							{#if home.now_making}
-								<div>
-									<span
-										><svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.7"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6" /></svg
-										>Making</span
-									>
-									<p>{home.now_making}</p>
-								</div>
-							{/if}
-							{#if home.now_listening}
-								<div>
-									<span
-										><svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.7"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											aria-hidden="true"
-											><path d="M3 14v-3a9 9 0 0 1 18 0v3" /><rect
-												x="3"
-												y="12"
-												width="4"
-												height="9"
-												rx="2"
-											/><rect x="17" y="12" width="4" height="9" rx="2" /></svg
-										>Listening</span
-									>
-									<p>{home.now_listening}</p>
-								</div>
-							{/if}
+					<div class="home__now-header">
+						<h2 id="now-title">These days</h2>
+						<p class="home__eyebrow">A note from my desk</p>
+					</div>
+					<div class="home__now-card">
+						<div class="home__now-inner">
+							<div class="home__now-grid">
+								{#if home.now_learning}
+									<div>
+										<span
+											><svg
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="1.7"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"
+												><path
+													d="M12 5v15M3 4h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3z"
+												/></svg
+											>Learning</span
+										>
+										<p>{home.now_learning}</p>
+									</div>
+								{/if}
+								{#if home.now_making}
+									<div>
+										<span
+											><svg
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="1.7"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6" /></svg
+											>Making</span
+										>
+										<p>{home.now_making}</p>
+									</div>
+								{/if}
+								{#if home.now_listening}
+									<div>
+										<span
+											><svg
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="1.7"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												aria-hidden="true"
+												><path d="M3 14v-3a9 9 0 0 1 18 0v3" /><rect
+													x="3"
+													y="12"
+													width="4"
+													height="9"
+													rx="2"
+												/><rect x="17" y="12" width="4" height="9" rx="2" /></svg
+											>Listening</span
+										>
+										<p>{home.now_listening}</p>
+									</div>
+								{/if}
+							</div>
 						</div>
 					</div>
 				</section>
@@ -323,7 +325,9 @@
 		.home__now {
 			container-type: inline-size;
 			display: grid;
-			gap: var(--space-m);
+			gap: var(--home-now-gap);
+		}
+		.home__now-card {
 			padding: var(--home-now-inset);
 			border: var(--border-width) solid transparent;
 			border-radius: var(--home-now-radius);
@@ -340,10 +344,8 @@
 			background: color-mix(in oklch, var(--home-now-background) 91%, transparent);
 		}
 		.home__now-header {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: var(--space-s);
+			display: grid;
+			gap: var(--space-xs);
 		}
 		.home__now-header .home__eyebrow {
 			margin-block-end: 0;
@@ -362,12 +364,6 @@
 		@container (max-width: 45rem) {
 			.home__now-grid {
 				grid-template-columns: 1fr;
-			}
-		}
-		@container (max-width: 30rem) {
-			.home__now-header {
-				flex-direction: column;
-				align-items: flex-start;
 			}
 		}
 		.home__now-grid span {
