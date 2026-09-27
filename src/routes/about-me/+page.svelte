@@ -25,9 +25,18 @@
 				<section class="about__section" aria-labelledby="about-focus">
 					<h2 id="about-focus">Where I can help</h2>
 					<div class="about__focus">
-						{#if content.development_focus}<div class="about__focus-card"><h3>ServiceNow development</h3><p>{content.development_focus}</p></div>{/if}
-						{#if content.mentorship_focus}<div class="about__focus-card"><h3>Mentorship</h3><p>{content.mentorship_focus}</p></div>{/if}
-						{#if content.consultation_focus}<div class="about__focus-card"><h3>Technical consultation</h3><p>{content.consultation_focus}</p></div>{/if}
+						{#if content.development_focus}<div class="about__focus-card">
+								<h3>ServiceNow development</h3>
+								<p>{content.development_focus}</p>
+							</div>{/if}
+						{#if content.mentorship_focus}<div class="about__focus-card">
+								<h3>Mentorship</h3>
+								<p>{content.mentorship_focus}</p>
+							</div>{/if}
+						{#if content.consultation_focus}<div class="about__focus-card">
+								<h3>Technical consultation</h3>
+								<p>{content.consultation_focus}</p>
+							</div>{/if}
 					</div>
 				</section>
 			{/if}
@@ -40,7 +49,9 @@
 			<section class="about__section" aria-labelledby="about-contact">
 				<h2 id="about-contact">Have a question in mind?</h2>
 				<p>Tell me what you are working through. We can start with a conversation.</p>
-				<a class="about__contact" href="/contact">Write to me <span aria-hidden="true">&#8599;</span></a>
+				<a class="about__contact" href="/contact"
+					>Write to me <span aria-hidden="true">&#8599;</span></a
+				>
 			</section>
 		</article>
 	</Container>
@@ -48,17 +59,71 @@
 
 <style>
 	@layer components {
-		.about { display: grid; gap: var(--section-space-s); }
-		.about__header { display: grid; gap: var(--space-s); }
-		.about__eyebrow { color: var(--text-muted); font-size: var(--font-size-meta); letter-spacing: 0.08em; text-transform: uppercase; }
-		.about__lead { max-inline-size: var(--text-width); font-size: var(--font-size-lead); line-height: 1.35; }
-		.about__section { display: grid; gap: var(--space-s); padding-block-start: var(--section-divider-padding); border-block-start: var(--border-width) solid var(--border-default); }
-		.about__section h2 { font-size: var(--h2); }
-		.about__focus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-s); }
-		.about__focus-card { display: grid; align-content: start; gap: var(--space-xs); padding: var(--space-m); border: var(--border-width) solid var(--border-default); border-radius: var(--radius-m); background: var(--surface-raised); }
-		.about__focus-card h3 { font-size: var(--h4); }
-		.about__contact { justify-self: start; color: var(--text-link); font-weight: var(--weight-semibold); text-decoration: none; }
-		.about__contact:hover { text-decoration: underline; }
-		@media (max-width: 48rem) { .about__focus { grid-template-columns: 1fr; } }
+		.about {
+			display: grid;
+			gap: var(--section-space-m);
+		}
+		.about__header {
+			display: grid;
+			gap: var(--space-s);
+		}
+		.about__eyebrow {
+			color: var(--text-muted);
+			font-size: var(--font-size-meta);
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+		.about__lead {
+			max-inline-size: var(--text-width);
+			font-size: var(--font-size-lead);
+			line-height: 1.35;
+		}
+		.about__section {
+			display: grid;
+			gap: var(--space-s);
+			padding-block: var(--space-s);
+		}
+		.about__section > p {
+			max-inline-size: var(--text-width);
+		}
+		.about__section:last-child {
+			padding: var(--space-l);
+			border-radius: var(--radius-l);
+			background: var(--content-note-background);
+		}
+		.about__section h2 {
+			font-size: var(--h2);
+		}
+		.about__focus {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: var(--space-s);
+		}
+		.about__focus-card {
+			display: grid;
+			align-content: start;
+			gap: var(--space-xs);
+			padding: var(--space-m);
+			border: var(--border-width) solid var(--border-default);
+			border-radius: var(--radius-m);
+			background: var(--surface-raised);
+		}
+		.about__focus-card h3 {
+			font-size: var(--h4);
+		}
+		.about__contact {
+			justify-self: start;
+			color: var(--text-link);
+			font-weight: var(--weight-semibold);
+			text-decoration: none;
+		}
+		.about__contact:hover {
+			text-decoration: underline;
+		}
+		@media (max-width: 48rem) {
+			.about__focus {
+				grid-template-columns: 1fr;
+			}
+		}
 	}
 </style>

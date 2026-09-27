@@ -168,6 +168,9 @@
 			font-size: var(--font-size-lead);
 		}
 		.course__summary {
+			padding: var(--space-m);
+			border-radius: var(--radius-l);
+			background: var(--content-panel-background);
 			display: flex;
 			flex-wrap: wrap;
 			gap: var(--space-l);
@@ -208,15 +211,14 @@
 		.course__section {
 			display: grid;
 			gap: var(--space-m);
-			padding-block-start: var(--section-space-s);
-			border-block-start: var(--border-width) solid var(--border-default);
+			padding: var(--space-l);
+			border-radius: var(--radius-l);
+			background: var(--content-panel-background);
 		}
 		.course__section h2 {
 			font-size: var(--h3);
 		}
 		.course__prose {
-			display: grid;
-			gap: var(--space-m);
 			max-inline-size: var(--text-width);
 		}
 		.course__prose :global(ul),
@@ -228,22 +230,28 @@
 		}
 		.course__topics {
 			display: grid;
-			gap: 0;
+			gap: var(--space-xs);
+			margin: 0;
 			padding: 0;
 			list-style: none;
 			counter-reset: topic;
 		}
 		.course__topics li {
 			display: grid;
-			grid-template-columns: 2.5rem minmax(0, 1fr);
-			align-items: baseline;
+			grid-template-columns: var(--content-number-size) minmax(0, 1fr);
+			align-items: start;
 			gap: var(--space-s);
-			padding-block: var(--space-s);
-			border-block-end: var(--border-width) solid var(--border-default);
+			padding-block: var(--space-xs);
 			counter-increment: topic;
 		}
 		.course__topics li::before {
 			content: counter(topic, decimal-leading-zero);
+			display: grid;
+			place-items: center;
+			inline-size: var(--content-number-size);
+			min-block-size: var(--content-number-size);
+			border-radius: var(--radius-m);
+			background: var(--home-reading-action-background);
 			color: var(--aqua);
 			font-size: var(--font-size-meta);
 			font-variant-numeric: tabular-nums;
@@ -252,16 +260,19 @@
 			display: grid;
 			gap: var(--space-s);
 			padding: var(--space-l);
-			border-inline-start: 2px solid var(--border-accent);
-			border-radius: var(--radius-s);
-			background: var(--surface-accent);
+			border-radius: var(--radius-l);
+			background: var(--content-note-background);
 		}
 		.course__faq {
 			padding-block: var(--space-s);
-			border-block-end: var(--border-width) solid var(--border-default);
+			padding-inline: var(--space-m);
+			border-radius: var(--radius-m);
+			background: var(--primary-dark);
 		}
 		.course__faq summary {
 			cursor: pointer;
+			min-block-size: var(--control-min-size);
+			align-content: center;
 			color: var(--text-main);
 			font-weight: var(--weight-semibold);
 		}

@@ -23,11 +23,29 @@
 
 <style>
 	@layer components {
-		.service { display: grid; justify-items: start; gap: var(--space-l); }
-		.service__eyebrow { color: var(--text-muted); font-size: var(--font-size-meta); letter-spacing: 0.08em; text-transform: uppercase; }
-		.service__body { max-inline-size: var(--text-width); }
-		.service__body :global(p + p) { margin-block-start: var(--space-m); }
-		.service__contact { padding: var(--space-xs) var(--space-m); border-radius: var(--radius-s); background: var(--action-primary-bg); color: var(--action-primary-text); text-decoration: none; }
-		.service__contact:hover { background: var(--action-primary-bg-hover); }
+		.service {
+			display: grid;
+			justify-items: start;
+			gap: var(--space-l);
+		}
+		.service__eyebrow {
+			color: var(--text-muted);
+			font-size: var(--font-size-meta);
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+		.service__body {
+			max-inline-size: var(--text-width);
+		}
+		.service__contact {
+			padding: var(--space-xs) var(--space-m);
+			border-radius: var(--radius-s);
+			background: var(--action-primary-bg);
+			color: var(--action-primary-text);
+			text-decoration: none;
+		}
+		.service__contact:hover {
+			background: var(--action-primary-bg-hover);
+		}
 	}
 </style>

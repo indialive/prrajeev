@@ -105,6 +105,66 @@
 }
 
 @layer components {
+	:where(.article__body, .service__body, .course__prose) :where(hr) {
+		border: 0;
+		block-size: 0;
+		margin-block: var(--section-space-m);
+	}
+	:where(.article__body, .service__body, .course__prose) {
+		max-inline-size: var(--text-width);
+		overflow-wrap: anywhere;
+	}
+	:where(.article__body, .service__body, .course__prose) > :where(* + *) {
+		margin-block-start: var(--space-m);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(h2, h3, h4) {
+		margin-block: var(--section-space-s) var(--space-s);
+		text-wrap: balance;
+	}
+	:where(.article__body, .service__body, .course__prose) :where(h2) {
+		font-size: var(--h2);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(h3, h4) {
+		font-size: var(--h4);
+	}
+	:where(.article__body, .service__body, .course__prose) > :first-child {
+		margin-block-start: 0;
+	}
+	:where(.article__body, .service__body, .course__prose) :where(ul, ol) {
+		margin-block-end: 0;
+	}
+	:where(.article__body, .service__body, .course__prose) li > :where(ul, ol) {
+		margin-block-start: var(--space-xs);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(blockquote) {
+		padding: var(--space-l);
+		border-radius: var(--radius-l);
+		background: var(--content-note-background);
+		color: var(--text-main);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(blockquote p + p) {
+		margin-block-start: var(--space-s);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(pre) {
+		padding: var(--space-m);
+		border-radius: var(--radius-l);
+		background: var(--code-bg);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(:not(pre) > code) {
+		padding: var(--space-2xs);
+		border-radius: var(--radius-s);
+		background: var(--code-bg);
+		font-size: var(--font-size-small);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(img) {
+		border-radius: var(--radius-l);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(figcaption) {
+		margin-block-start: var(--space-xs);
+		font-size: var(--font-size-small);
+		color: var(--text-muted);
+	}
+
 	:where(.article__body, .service__body, .course__prose) :where(ul, ol) {
 		padding-inline-start: var(--space-l);
 	}

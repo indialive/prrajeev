@@ -93,7 +93,7 @@
 		.contact__form button:hover:not(:disabled) { background: var(--action-primary-bg-hover); }
 		.contact__form button:disabled { opacity: 0.5; cursor: not-allowed; }
 		.contact__note { color: var(--text-muted); font-size: var(--font-size-meta); }
-		.contact__section { display: grid; gap: var(--space-m); padding-block-start: var(--section-divider-padding); border-block-start: var(--border-width) solid var(--border-default); }
+		.contact__section { display: grid; gap: var(--space-m); padding-block-start: var(--section-space-s); }
 		.contact__topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-s); }
 		.contact__topics a { display: grid; gap: var(--space-xs); padding: var(--space-m); border: var(--border-width) solid var(--border-default); border-radius: var(--radius-m); background: var(--surface-raised); color: var(--text-body); text-decoration: none; }
 		.contact__topics a:hover { border-color: var(--border-accent); }
