@@ -25,16 +25,21 @@
 				</div>
 				<div class="home__portrait-feature">
 					{#if portrait?.url}
-						<img
-							class="home__portrait"
-							src={portrait?.url}
-							srcset={portrait?.srcset}
-							sizes="(max-width: 52rem) 40vw, 17.5rem"
-							alt={portrait?.alt || 'Portrait of P R Rajeev'}
-							width={portrait?.width || 144}
-							height={portrait?.height || 144}
-							fetchpriority="high"
-						/>
+						<picture>
+							<source
+								media="(width > 30rem)"
+								srcset={portrait.srcset || portrait.url}
+								sizes="(max-width: 52rem) 40vw, 17.5rem"
+							/>
+							<img
+								class="home__portrait"
+								src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E"
+								alt={portrait?.alt || 'Portrait of P R Rajeev'}
+								width={portrait?.width || 144}
+								height={portrait?.height || 144}
+								fetchpriority="high"
+							/>
+						</picture>
 					{:else}
 						<div class="home__portrait home__portrait--placeholder" aria-hidden="true">PR</div>
 					{/if}

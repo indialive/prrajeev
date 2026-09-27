@@ -10,6 +10,8 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
+			// Inline the small route styles to avoid render-blocking CSS round trips.
+			inlineStyleThreshold: 24_000,
 			adapter: adapter()
 		})
 	]

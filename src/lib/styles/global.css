@@ -4,7 +4,7 @@
 
 @font-face {
 	font-family: 'Outfit';
-	src: url('/fonts/outfit-latin.woff2') format('woff2');
+	src: url('../assets/outfit-latin.woff2') format('woff2');
 	font-style: normal;
 	font-weight: 400 700;
 	font-display: swap;
