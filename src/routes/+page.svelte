@@ -273,7 +273,7 @@
 		}
 		.home__help h2 {
 			margin-block-end: var(--space-m);
-			font-size: var(--h3);
+			font-size: var(--h2);
 		}
 		.home__cards {
 			display: grid;
@@ -286,6 +286,8 @@
 			}
 		}
 		.home-card {
+			position: relative;
+			isolation: isolate;
 			display: grid;
 			align-content: start;
 			gap: var(--space-xs);
@@ -298,6 +300,15 @@
 			transition:
 				border-color var(--duration-fast) var(--ease-default),
 				transform var(--duration-fast) var(--ease-default);
+		}
+		.home-card::before {
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+			border-radius: inherit;
+			background: var(--home-card-highlight);
+			content: '';
+			pointer-events: none;
 		}
 		.home-card:hover {
 			border-color: var(--border-accent);
@@ -325,7 +336,7 @@
 		.home__now {
 			container-type: inline-size;
 			display: grid;
-			gap: var(--home-now-gap);
+			gap: var(--space-m);
 		}
 		.home__now-card {
 			padding: var(--home-now-inset);
@@ -368,12 +379,26 @@
 			}
 		}
 		.home__now-grid span {
+			position: relative;
+			isolation: isolate;
 			display: flex;
 			align-items: center;
 			gap: var(--space-xs);
 			color: var(--text-muted);
 			font-size: var(--font-size-meta);
 			text-transform: uppercase;
+		}
+		.home__now-grid span::before {
+			position: absolute;
+			inset-inline-start: calc(-0.5 * var(--home-now-icon-size));
+			inset-block-start: 50%;
+			translate: 0 -50%;
+			inline-size: calc(2 * var(--home-now-icon-size));
+			block-size: calc(2 * var(--home-now-icon-size));
+			z-index: -1;
+			background: var(--home-icon-radiance);
+			content: '';
+			pointer-events: none;
 		}
 		.home__now-grid svg {
 			inline-size: var(--home-now-icon-size);
@@ -390,7 +415,7 @@
 			padding-block: var(--section-space-m);
 			container-type: inline-size;
 			display: grid;
-			gap: var(--space-xl);
+			gap: var(--space-m);
 		}
 		.home__journal::before {
 			position: absolute;
@@ -401,7 +426,7 @@
 			content: '';
 		}
 		.home__journal-header h2 {
-			font-size: var(--h1);
+			font-size: var(--h2);
 		}
 		.home__journal-header {
 			display: flex;
@@ -451,7 +476,7 @@
 		}
 		.home-feature h3 {
 			font-size: var(--home-feature-heading);
-			line-height: 1.08;
+			line-height: var(--leading-heading);
 			overflow-wrap: anywhere;
 		}
 		.home-feature__excerpt {
@@ -501,7 +526,7 @@
 			gap: var(--space-xs);
 		}
 		.home__contact h2 {
-			font-size: var(--h5);
+			font-size: var(--h2);
 		}
 		.home__contact p {
 			color: var(--text-muted);

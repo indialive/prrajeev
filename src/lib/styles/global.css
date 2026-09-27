@@ -104,6 +104,38 @@
 	}
 }
 
+@layer components {
+	:where(.article__body, .service__body, .course__prose) :where(ul, ol) {
+		padding-inline-start: var(--space-l);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(li + li) {
+		margin-block-start: var(--space-xs);
+	}
+	:where(.article__body, .service__body, .course__prose) :where(ul) > li {
+		position: relative;
+		list-style-type: disc;
+	}
+	:where(.article__body, .service__body, .course__prose) :where(ul) > li::marker {
+		color: transparent;
+	}
+	:where(.article__body, .service__body, .course__prose) :where(ul) > li::before {
+		position: absolute;
+		inset-inline-start: calc(-1 * var(--space-m));
+		inset-block-start: calc((var(--leading-body) * 1em - var(--list-marker-size)) / 2);
+		inline-size: var(--list-marker-size);
+		block-size: var(--list-marker-size);
+		border-radius: 50%;
+		background: var(--text-link);
+		box-shadow: var(--list-marker-glow);
+		content: '';
+		pointer-events: none;
+	}
+	:where(.article__body, .service__body, .course__prose) :where(ol) > li::marker {
+		color: var(--text-link);
+		font-weight: var(--weight-semibold);
+		font-variant-numeric: tabular-nums;
+	}
+}
 @layer utilities {
 	/* Also disable motion that uses literal durations. */
 	@media (prefers-reduced-motion: reduce) {

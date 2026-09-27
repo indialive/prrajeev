@@ -91,7 +91,7 @@
 		--home-now-entry-gap: 1.25rem;
 		--home-now-column-gap: 2.25rem;
 		--home-now-icon-size: 1.125rem;
-		--home-now-heading: clamp(1.75rem, 1.706rem + 0.188vw, 1.875rem);
+		--home-now-heading: var(--h2);
 		--home-glass-rim: linear-gradient(
 			135deg,
 			oklch(92% 0.06 195 / 0.3),
@@ -99,7 +99,7 @@
 			oklch(92% 0.06 195 / 0.17)
 		);
 		--home-glass-border: color-mix(in oklch, var(--aqua) 10%, transparent);
-		--home-feature-heading: clamp(2.125rem, 1.861rem + 1.127vw, 2.875rem);
+		--home-feature-heading: var(--h3);
 		--home-feature-gap: 1.25rem;
 		--home-feature-overlap: 1.5rem;
 		--home-feature-offset: 6rem;
@@ -108,7 +108,18 @@
 		--home-feature-image-ratio: 76 / 43;
 		--home-feature-mobile-ratio: 57 / 40;
 		--home-feature-border: color-mix(in oklch, var(--aqua) 24%, transparent);
-		--home-now-column-width: 14rem;
+		--list-marker-size: 0.375em;
+		--list-marker-glow: 0 0 0.6em color-mix(in oklch, var(--aqua) 22%, transparent);
+		--home-icon-radiance: radial-gradient(
+			circle,
+			color-mix(in oklch, var(--aqua) 14%, transparent),
+			transparent 70%
+		);
+		--home-card-highlight: radial-gradient(
+			ellipse at 100% 0%,
+			color-mix(in oklch, var(--aqua) 8%, transparent),
+			transparent 60%
+		);
 	}
 
 	:root,
