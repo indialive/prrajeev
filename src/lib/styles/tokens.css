@@ -83,7 +83,7 @@
 		--home-portrait-size-tablet: 6rem;
 		--home-portrait-height-tablet: 6.75rem;
 		--home-portrait-frame-size-tablet: 7.5rem;
-		--home-section-gap: 2.25rem;
+		--home-section-gap: var(--section-space-m);
 	}
 
 	:root,
