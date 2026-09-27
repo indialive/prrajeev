@@ -136,6 +136,22 @@
 		font-variant-numeric: tabular-nums;
 	}
 }
+@layer components {
+	:where(.article__body) :where(ul.prrajeevwp-checklist, ul.prrajeevwp-link-list) > li::before {
+		inline-size: var(--list-symbol-size);
+		block-size: var(--list-symbol-size);
+		inset-block-start: calc((var(--leading-body) * 1em - var(--list-symbol-size)) / 2);
+		border-radius: 0;
+		box-shadow: none;
+		mask: var(--list-symbol) center / contain no-repeat;
+	}
+	:where(.article__body) :where(ul.prrajeevwp-checklist) > li {
+		--list-symbol: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22m5%2012%204%204L19%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+	}
+	:where(.article__body) :where(ul.prrajeevwp-link-list) > li {
+		--list-symbol: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M5%2012h14m-6-6%206%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+	}
+}
 @layer utilities {
 	/* Also disable motion that uses literal durations. */
 	@media (prefers-reduced-motion: reduce) {

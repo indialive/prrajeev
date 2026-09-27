@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import Container from '$lib/components/Container.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import NowPreview from '$lib/components/NowPreview.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -9,7 +10,8 @@
 	let home = $derived(data.home);
 	let site = $derived(data.site);
 	let portrait = $derived(site.portrait || site.avatar || undefined);
-	let hasNow = $derived(Boolean(home.now_learning || home.now_making || home.now_listening));
+	let now = $derived(data.now);
+	let hasNow = $derived(Boolean(now.learning || now.making || now.listening));
 </script>
 
 <Section>
@@ -120,7 +122,7 @@
 					<div class="home__now-card">
 						<div class="home__now-inner">
 							<div class="home__now-grid">
-								{#if home.now_learning}
+								{#if now.learning}
 									<div>
 										<span
 											><svg
@@ -136,10 +138,11 @@
 												/></svg
 											>Learning</span
 										>
-										<p>{home.now_learning}</p>
+										{#if now.learning.note}<p class="home__now-note">{now.learning.note}</p>{/if}
+										<NowPreview preview={now.learning} kind="learning" />
 									</div>
 								{/if}
-								{#if home.now_making}
+								{#if now.making}
 									<div>
 										<span
 											><svg
@@ -152,10 +155,11 @@
 												aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6" /></svg
 											>Making</span
 										>
-										<p>{home.now_making}</p>
+										{#if now.making.note}<p class="home__now-note">{now.making.note}</p>{/if}
+										<NowPreview preview={now.making} kind="making" />
 									</div>
 								{/if}
-								{#if home.now_listening}
+								{#if now.listening}
 									<div>
 										<span
 											><svg
@@ -175,7 +179,23 @@
 												/><rect x="17" y="12" width="4" height="9" rx="2" /></svg
 											>Listening</span
 										>
-										<p>{home.now_listening}</p>
+										{#if now.listening.note}<p class="home__now-note">{now.listening.note}</p>{/if}
+										{#if now.listening.embedUrl}<div class="home__listening-player">
+												<iframe
+													class="home__spotify"
+													src={now.listening.embedUrl + '?theme=0'}
+													title="Spotify player — what Rajeev is listening to"
+													allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+													allowfullscreen
+													loading="lazy"
+
+												></iframe><!-- eslint-disable svelte/no-navigation-without-resolve -- validated Spotify external URL --><a
+													class="home__spotify-fallback"
+													href={now.listening.embedUrl.replace('/embed/', '/')}
+													>Listen on Spotify <span aria-hidden="true">&#8599;</span></a
+												>
+												<!-- eslint-enable svelte/no-navigation-without-resolve -->
+											</div>{/if}
 									</div>
 								{/if}
 							</div>
@@ -386,12 +406,49 @@
 			align-content: start;
 			gap: var(--home-now-entry-gap);
 		}
+		.home__now-grid > div {
+			min-inline-size: 0;
+			grid-template-rows: auto 1fr auto;
+		}
+		.home__now-note {
+			align-self: start;
+		}
+		.home__listening-player {
+			container-type: inline-size;
+			min-inline-size: 0;
+		}
+		.home__spotify-fallback {
+			display: none;
+			padding: var(--space-s);
+			min-block-size: var(--control-min-size);
+			border-radius: var(--radius-l);
+			background: var(--home-widget-background);
+		}
+		@container (max-width: 18.75rem) {
+			.home__spotify {
+				display: none;
+			}
+			.home__spotify-fallback {
+				display: block;
+			}
+		}
+		.home__spotify {
+			display: block;
+			inline-size: 100%;
+			block-size: var(--home-spotify-height);
+			border: 0;
+			border-radius: var(--radius-l);
+			background: var(--home-widget-background);
+		}
 		@container (max-width: 45rem) {
+			.home__now-grid > div {
+				grid-template-rows: none;
+			}
 			.home__now-grid {
 				grid-template-columns: 1fr;
 			}
 		}
-		.home__now-grid span {
+		.home__now-grid > div > span {
 			position: relative;
 			isolation: isolate;
 			display: flex;
@@ -401,7 +458,7 @@
 			font-size: var(--font-size-meta);
 			text-transform: uppercase;
 		}
-		.home__now-grid span::before {
+		.home__now-grid > div > span::before {
 			position: absolute;
 			inset-inline-start: calc(-0.5 * var(--home-now-icon-size));
 			inset-block-start: 50%;

@@ -59,9 +59,18 @@ export type HomeFields = {
 	consultation_heading?: string;
 	consultation_summary?: string;
 	writing_note?: string;
-	now_learning?: string;
-	now_making?: string;
-	now_listening?: string;
+	now_learning?: string | null | false;
+	now_learning_title?: string | null | false;
+	now_learning_source?: string | null | false;
+	now_learning_url?: string | null | false;
+	now_learning_image?: unknown;
+	now_making?: string | null | false;
+	now_making_title?: string | null | false;
+	now_making_status?: string | null | false;
+	now_making_url?: string | null | false;
+	now_making_image?: unknown;
+	now_listening?: string | null | false;
+	now_listening_spotify_url?: string | null | false;
 };
 
 export type WordPressPage<T> = {

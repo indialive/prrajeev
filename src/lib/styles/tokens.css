@@ -92,6 +92,11 @@
 		--home-now-entry-gap: 1.25rem;
 		--home-now-column-gap: 2.25rem;
 		--home-now-icon-size: 1.125rem;
+		--home-widget-height: 5rem;
+		--home-spotify-height: 9.5rem;
+		--home-widget-image-size: 3rem;
+		--home-widget-background: oklch(20.104% 0.02095 239.55);
+		--list-symbol-size: 1em;
 		--home-now-heading: var(--h2);
 		--home-glass-rim: linear-gradient(
 			135deg,
