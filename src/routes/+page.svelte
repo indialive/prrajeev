@@ -425,21 +425,21 @@
 			background: var(--home-widget-background);
 		}
 		.home__spotify {
-			display: none;
-		}
-		.home__spotify-fallback {
 			display: block;
+			inline-size: 100%;
+			block-size: var(--home-spotify-height);
+			border: 0;
+			border-radius: var(--radius-l);
+			background: var(--home-widget-background);
 		}
-	}
-	.home__spotify {
-		display: block;
-		inline-size: 100%;
-		block-size: var(--home-spotify-height);
-		border: 0;
-		border-radius: var(--radius-l);
-		background: var(--home-widget-background);
-	}
-	@container (max-width: 18.75rem) {
+		@container (max-width: 18.75rem) {
+			.home__spotify {
+				display: none;
+			}
+			.home__spotify-fallback {
+				display: block;
+			}
+		}
 		@container (max-width: 45rem) {
 			.home__now-grid > div {
 				grid-template-rows: none;
