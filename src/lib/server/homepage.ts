@@ -10,11 +10,13 @@ export async function getFeaturedArticle(fetcher: typeof fetch) {
 				post.slug !== 'hello-world' && !/\[Draft article:/i.test(plainText(post.excerpt.rendered))
 		);
 		if (!post) return undefined;
+		const excerpt = plainText(post.excerpt.rendered);
+		const words = excerpt.split(/\s+/);
 		return {
 			id: post.id,
 			slug: post.slug,
 			title: plainText(post.title.rendered),
-			excerpt: plainText(post.excerpt.rendered),
+			excerpt: words.length > 15 ? words.slice(0, 15).join(' ') + '…' : excerpt,
 			image: (await resolveImage(post.featured_media, fetcher, 'large')) || undefined
 		};
 	} catch (cause) {
