@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/private';
 
 export const contactReady = () =>
 	Boolean(
-		env.RESEND_API_KEY &&
+		env.SENDGRID_API_KEY &&
 		env.CONTACT_FROM &&
 		env.CONTACT_TO &&
 		env.TURNSTILE_SITE_KEY &&
@@ -51,30 +51,41 @@ export async function verifyContactToken(token: string, fetcher: typeof fetch): 
 	return result.success === true && result.action === 'contact';
 }
 
+/** Accepts `a@b.com` or `Name <a@b.com>`, the shape SendGrid wants as { email, name }. */
+function parseAddress(value: string): { email: string; name?: string } {
+	const match = /^\s*(?:"?([^"<]*?)"?\s*)?<([^>]+)>\s*$/.exec(value);
+	return match
+		? { email: match[2].trim(), name: match[1]?.trim() || undefined }
+		: { email: value.trim() };
+}
+
 export async function deliverContact(values: ContactValues, fetcher: typeof fetch): Promise<void> {
-	const response = await fetcher('https://api.resend.com/emails', {
+	const response = await fetcher('https://api.sendgrid.com/v3/mail/send', {
 		method: 'POST',
-		headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+		headers: {
+			Authorization: 'Bearer ' + env.SENDGRID_API_KEY,
+			'Content-Type': 'application/json'
+		},
 		body: JSON.stringify({
-			from: env.CONTACT_FROM,
-			to: [env.CONTACT_TO],
-			reply_to: values.email,
+			personalizations: [{ to: [{ email: env.CONTACT_TO }] }],
+			from: parseAddress(env.CONTACT_FROM!),
+			reply_to: { email: values.email, name: values.name },
 			subject: values.topic + ' enquiry from ' + values.name,
-			text:
-				'Name: ' +
-				values.name +
-				'\nEmail: ' +
-				values.email +
-				'\nTopic: ' +
-				values.topic +
-				'\n\n' +
-				values.message
+			content: [
+				{
+					type: 'text/plain',
+					value: `Name: ${values.name}
+Email: ${values.email}
+Topic: ${values.topic}
+
+${values.message}`
+				}
+			]
 		}),
 		signal: AbortSignal.timeout(10000)
 	});
-	if (!response.ok) throw new Error('Email service status ' + response.status);
-	const result = (await response.json()) as { id?: string };
-	if (!result.id) throw new Error('Email service did not acknowledge the message');
+	// SendGrid acknowledges an accepted message with 202 and an empty body.
+	if (response.status !== 202) throw new Error('Email service status ' + response.status);
 }
 
 export class ContactBodyTooLarge extends Error {}

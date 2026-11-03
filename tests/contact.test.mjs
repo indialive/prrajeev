@@ -8,7 +8,7 @@ const code = ts.transpileModule(fs.readFileSync('src/lib/server/contact.ts', 'ut
 }).outputText;
 const exportsObject = {};
 const env = {
-	RESEND_API_KEY: 'test-key',
+	SENDGRID_API_KEY: 'test-key',
 	CONTACT_FROM: 'Website <website@example.com>',
 	CONTACT_TO: 'recipient@example.com',
 	TURNSTILE_SITE_KEY: 'site-key',
@@ -77,14 +77,17 @@ test('spam tokens must succeed with the contact action', async () => {
 });
 test('delivery uses configured recipient, reply-to, and plain text', async () => {
 	await deliverContact(validateContact(valid()).values, async (url, options) => {
-		assert.equal(url, 'https://api.resend.com/emails');
+		assert.equal(url, 'https://api.sendgrid.com/v3/mail/send');
+		assert.equal(options.headers.Authorization, 'Bearer test-key');
 		const body = JSON.parse(options.body);
-		assert.equal(body.to[0], env.CONTACT_TO);
-		assert.equal(body.reply_to, 'visitor@example.com');
-		assert.equal(body.from, env.CONTACT_FROM);
-		assert.ok(body.text.includes('A test inquiry'));
-		assert.equal(body.html, undefined);
-		return Response.json({ id: 'test-id' });
+		assert.equal(body.personalizations[0].to[0].email, env.CONTACT_TO);
+		assert.equal(body.reply_to.email, 'visitor@example.com');
+		assert.equal(body.from.email, 'website@example.com');
+		assert.equal(body.from.name, 'Website');
+		assert.equal(body.content.length, 1);
+		assert.equal(body.content[0].type, 'text/plain');
+		assert.ok(body.content[0].value.includes('A test inquiry'));
+		return new Response(null, { status: 202 });
 	});
 });
 test('provider failure or missing acknowledgement cannot report success', async () => {
@@ -92,7 +95,7 @@ test('provider failure or missing acknowledgement cannot report success', async 
 		deliverContact(validateContact(valid()).values, async () => new Response('', { status: 500 }))
 	);
 	await assert.rejects(
-		deliverContact(validateContact(valid()).values, async () => Response.json({}))
+		deliverContact(validateContact(valid()).values, async () => new Response('', { status: 200 }))
 	);
 });
 test('missing configuration disables delivery', () => {

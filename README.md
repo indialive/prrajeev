@@ -44,12 +44,12 @@ The audit observed actual upstream WordPress 500s under concurrent requests and 
 
 ## Contact configuration and delivery verification
 
-The form uses a SvelteKit server action, field validation, a honeypot, single-use Turnstile tokens verified against the request hostname and `contact` action, and the Resend HTTP API. No additional packages are required. Email content is plain text; the visitor's email is used only as Reply-To. SvelteKit's default origin checks remain enabled.
+The form uses a SvelteKit server action, field validation, a honeypot, single-use Turnstile tokens verified against the request hostname and `contact` action, and the SendGrid v3 Mail Send HTTP API. No additional packages are required. Email content is plain text; the visitor's email is used only as Reply-To. SvelteKit's default origin checks remain enabled.
 
 Set these server-side values in Cloudflare Pages production configuration:
 
-- `RESEND_API_KEY`: email delivery API key.
-- `CONTACT_FROM`: sender address on a domain verified with Resend.
+- `SENDGRID_API_KEY`: SendGrid API key with the Mail Send permission only.
+- `CONTACT_FROM`: sender address on a domain authenticated in SendGrid, as `Name <address>` or `address`.
 - `CONTACT_TO`: explicitly chosen recipient. The CMS currently displays `ranjith@indialive.com`; confirm whether this is the intended recipient.
 - `TURNSTILE_SITE_KEY`: public site key, exposed only to the form.
 - `TURNSTILE_SECRET_KEY`: private verification key. Allow the production hostname in the widget configuration.
