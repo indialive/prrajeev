@@ -2,20 +2,31 @@ import { error, isHttpError } from '@sveltejs/kit';
 import { wordpressFetch } from './wordpress-cache';
 import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
+import type {
+	WordPressImage,
+	SeoFields,
+	SiteFields,
+	HomeFields,
+	WordPressPage,
+	WordPressPost,
+	MediaResponse,
+	WordPressCourse
+} from './wordpress-types';
+export type {
+	WordPressImage,
+	SeoFields,
+	MenuItem,
+	SiteFields,
+	RawSiteFields,
+	HomeFields,
+	WordPressPage,
+	WordPressPost,
+	AboutFields,
+	ContactFields,
+	CourseFields,
+	WordPressCourse
+} from './wordpress-types';
 
-export type WordPressImage = {
-	url?: string;
-	srcset?: string;
-	alt?: string;
-	width?: number;
-	height?: number;
-};
-
-export type SeoFields = {
-	seo_title?: string | null | false;
-	seo_description?: string | null | false;
-	seo_image?: unknown;
-};
 export async function resolveSeo(fields: SeoFields | undefined, fetcher: typeof fetch) {
 	const text = (value: unknown) =>
 		typeof value === 'string' ? value.trim() || undefined : undefined;
@@ -25,61 +36,6 @@ export async function resolveSeo(fields: SeoFields | undefined, fetcher: typeof 
 		image: await resolveImage(fields?.seo_image, fetcher, 'large')
 	};
 }
-export type MenuItem = {
-	section: 'primary' | 'help';
-	label: string;
-	path: string;
-};
-
-export type SiteFields = {
-	brand_name?: string;
-	tagline?: string;
-	site_logo?: WordPressImage | false;
-	avatar?: WordPressImage | false;
-	portrait?: WordPressImage | false;
-	contact_email?: string;
-	linkedin_url?: string;
-	whatsapp_url?: string;
-	footer_note?: string;
-	menu_items?: MenuItem[];
-};
-
-export type RawSiteFields = Omit<SiteFields, 'avatar' | 'site_logo' | 'portrait'> & {
-	avatar?: WordPressImage | number | string | null | false;
-	site_logo?: WordPressImage | number | string | null | false;
-	portrait?: WordPressImage | number | string | null | false;
-};
-
-export type HomeFields = {
-	hero_kicker?: string;
-	hero_heading?: string;
-	hero_intro?: string;
-	mentorship_heading?: string;
-	mentorship_summary?: string;
-	consultation_heading?: string;
-	consultation_summary?: string;
-	writing_note?: string;
-	now_learning?: string | null | false;
-	now_learning_title?: string | null | false;
-	now_learning_source?: string | null | false;
-	now_learning_url?: string | null | false;
-	now_learning_image?: unknown;
-	now_making?: string | null | false;
-	now_making_title?: string | null | false;
-	now_making_status?: string | null | false;
-	now_making_url?: string | null | false;
-	now_making_image?: unknown;
-	now_listening?: string | null | false;
-	now_listening_spotify_url?: string | null | false;
-};
-
-export type WordPressPage<T> = {
-	id: number;
-	slug: string;
-	title: { rendered: string };
-	content: { rendered: string };
-	acf: T & SeoFields;
-};
 
 export const previewSite: SiteFields = {
 	brand_name: 'P R Rajeev',
@@ -187,16 +143,6 @@ export function usePreviewContent(): boolean {
 	return dev && !hasWordPress();
 }
 
-export type WordPressPost = {
-	featured_media?: number;
-	acf?: SeoFields;
-	id: number;
-	slug: string;
-	date: string;
-	title: { rendered: string };
-	excerpt: { rendered: string };
-};
-
 export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> {
 	const { data } = await wp<WordPressPost[]>(
 		'/posts?per_page=12&_fields=id,slug,date,title,excerpt,featured_media',
@@ -204,32 +150,6 @@ export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> 
 	);
 	return data;
 }
-export type AboutFields = {
-	hero_heading?: string;
-	intro?: string;
-	professional_story?: string;
-	development_focus?: string;
-	mentorship_focus?: string;
-	consultation_focus?: string;
-	working_approach?: string;
-};
-
-export type ContactFields = {
-	hero_heading?: string;
-	intro?: string;
-	form_intro?: string;
-	response_note?: string;
-};
-
-type MediaResponse = {
-	source_url: string;
-	alt_text: string;
-	media_details?: {
-		width?: number;
-		height?: number;
-		sizes?: Record<string, { source_url: string; width: number; height: number }>;
-	};
-};
 
 export async function resolveImage(
 	value: unknown,
@@ -306,28 +226,6 @@ export function getPost(
 		fetcher
 	);
 }
-export type CourseFields = {
-	short_intro?: string;
-	audience?: string;
-	learning_topics?: Array<{ topic: string }>;
-	mentor_note?: string;
-	format?: string;
-	time_commitment?: string;
-	fee_note?: string;
-	prerequisites?: string;
-	faqs?: Array<{ question: string; answer: string }>;
-};
-
-export type WordPressCourse = {
-	id: number;
-	slug: string;
-	title: { rendered: string };
-	content: { rendered: string };
-	excerpt: { rendered: string };
-	featured_media?: number;
-	image?: WordPressImage | false;
-	acf: CourseFields & SeoFields;
-};
 
 export async function getCourses(fetcher: typeof fetch): Promise<WordPressCourse[]> {
 	const { data } = await wp<WordPressCourse[]>(
