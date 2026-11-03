@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import NavIcon from '$lib/components/NavIcon.svelte';
 	import type { Snippet } from 'svelte';
@@ -9,6 +11,13 @@
 	let brandImage = $derived(site.avatar || site.site_logo || undefined);
 	let failedImageUrl = $state<string>();
 	let menuOpen = $state(false);
+	let enhanced = $state(false);
+	let menuButton: HTMLButtonElement;
+	onMount(() => { enhanced = true; });
+	afterNavigate(() => { menuOpen = false; });
+	function closeOnEscape(event: KeyboardEvent) {
+		if (event.key === 'Escape' && menuOpen) { menuOpen = false; menuButton?.focus(); }
+	}
 
 	const fallbackMenu: MenuItem[] = [
 		{ section: 'primary', label: 'Home', path: '/' },
@@ -34,11 +43,12 @@
 	});
 
 	function isCurrent(path: string): boolean {
-		return path === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(path);
+		return path === '/' ? page.url.pathname === '/' : page.url.pathname === path || page.url.pathname.startsWith(path + '/');
 	}
 </script>
 
-<div class="site-root" data-theme="dark">
+<svelte:window onkeydown={closeOnEscape} />
+<div class="site-root" data-theme="dark" data-enhanced={enhanced}>
 <a class="skip-link" href="#main-content">Skip to content</a>
 
 <header class="site-header">
@@ -59,6 +69,7 @@
 	<a class="site-header__contact" href="/contact">Write to me <span aria-hidden="true">&#8599;</span></a>
 	<button
 		class="site-header__menu"
+		bind:this={menuButton}
 		type="button"
 		aria-label={menuOpen ? 'Close menu' : 'Open menu'}
 		aria-controls="site-sidebar"
@@ -127,7 +138,7 @@
 	</aside>
 
 	<div class="site-frame__content">
-		<main id="main-content" class="site-main">
+		<main id="main-content" class="site-main" tabindex="-1">
 			{@render children()}
 		</main>
 		<footer class="site-footer">
@@ -352,6 +363,7 @@
 			.site-header__contact {
 				display: none;
 			}
+			.site-root[data-enhanced='false'] .site-header__menu { display: none; }
 			.site-header__menu {
 				display: grid;
 				place-items: center;
@@ -373,6 +385,11 @@
 				overflow-y: auto;
 				border-inline-end: 0;
 				border-block-end: var(--border-width) solid var(--border-default);
+			}
+			.site-root[data-enhanced='false'] .site-sidebar {
+				position: static;
+				display: flex;
+				max-block-size: none;
 			}
 			.site-sidebar[data-open='true'] {
 				display: flex;

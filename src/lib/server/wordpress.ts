@@ -108,6 +108,22 @@ export const previewHome: HomeFields = {
 	now_making: '[What I am working on now]',
 	now_listening: '[Optional personal note]'
 };
+const NO_ENDPOINT = 'Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.';
+
+/** Public routes for WordPress content; drives the sitemap. Pages map by slug, other types by prefix. */
+const pageRoutes: Record<string, string> = {
+	home: '/',
+	'about-me': '/about-me',
+	contact: '/contact',
+	mentorship: '/mentorship',
+	'technical-consultation': '/consultation'
+};
+const collectionRoutes = {
+	posts: { prefix: '/articles', ignore: ['hello-world'] },
+	courses: { prefix: '/courses', ignore: [] as string[] }
+};
+const indexRoutes = ['/articles', '/courses'];
+
 function apiBase(): string | undefined {
 	const configured = env.WORDPRESS_API_URL?.trim();
 	return (configured || (dev ? undefined : 'https://cms.prrajeev.com/wp-json/wp/v2'))?.replace(
@@ -132,24 +148,39 @@ export async function getSiteIcon(fetcher: typeof fetch): Promise<string | undef
 	}
 }
 
+/** Fetch JSON from a collection path (e.g. `/posts?per_page=12`); throws if WordPress is not configured. */
+async function wp<T>(
+	path: string,
+	fetcher: typeof fetch
+): Promise<{ data: T; response: Response }> {
+	const base = apiBase();
+	if (!base) throw new Error(NO_ENDPOINT);
+	const response = await wordpressFetch(base + path, fetcher);
+	return { data: (await response.json()) as T, response };
+}
+
+/** First item of a slug query, or a 404. */
+async function wpBySlug<T>(
+	type: string,
+	slug: string,
+	fields: string,
+	notFound: string,
+	fetcher: typeof fetch
+): Promise<T> {
+	const { data } = await wp<T[]>(
+		`/${type}?slug=${encodeURIComponent(slug)}&_fields=${fields}`,
+		fetcher
+	);
+	if (!data[0]) error(404, notFound);
+	return data[0];
+}
+
 export function hasWordPress(): boolean {
 	return Boolean(apiBase());
 }
 
-export async function getPage<T>(slug: string, fetcher: typeof fetch): Promise<WordPressPage<T>> {
-	const base = apiBase();
-	if (!base) {
-		throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	}
-
-	const url = `${base}/pages?slug=${encodeURIComponent(slug)}&_fields=id,slug,title,content,acf`;
-	const response = await wordpressFetch(url, fetcher);
-
-	const pages = (await response.json()) as WordPressPage<T>[];
-	if (!pages[0]) {
-		error(404, 'Page not found');
-	}
-	return pages[0];
+export function getPage<T>(slug: string, fetcher: typeof fetch): Promise<WordPressPage<T>> {
+	return wpBySlug('pages', slug, 'id,slug,title,content,acf', 'Page not found', fetcher);
 }
 
 export function usePreviewContent(): boolean {
@@ -167,13 +198,11 @@ export type WordPressPost = {
 };
 
 export async function getPosts(fetcher: typeof fetch): Promise<WordPressPost[]> {
-	const base = apiBase();
-	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await wordpressFetch(
-		base + '/posts?per_page=12&_fields=id,slug,date,title,excerpt,featured_media',
+	const { data } = await wp<WordPressPost[]>(
+		'/posts?per_page=12&_fields=id,slug,date,title,excerpt,featured_media',
 		fetcher
 	);
-	return (await response.json()) as WordPressPost[];
+	return data;
 }
 export type AboutFields = {
 	hero_heading?: string;
@@ -265,22 +294,17 @@ function getMedia(base: string, id: number, fetcher: typeof fetch): Promise<Medi
 	}
 	return pending;
 }
-export async function getPost(
+export function getPost(
 	slug: string,
 	fetcher: typeof fetch
 ): Promise<WordPressPost & { content: { rendered: string } }> {
-	const base = apiBase();
-	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await wordpressFetch(
-		base +
-			'/posts?slug=' +
-			encodeURIComponent(slug) +
-			'&_fields=id,slug,date,title,excerpt,content,acf',
+	return wpBySlug(
+		'posts',
+		slug,
+		'id,slug,date,title,excerpt,content,acf',
+		'Article not found',
 		fetcher
 	);
-	const posts = (await response.json()) as Array<WordPressPost & { content: { rendered: string } }>;
-	if (!posts[0]) error(404, 'Article not found');
-	return posts[0];
 }
 export type CourseFields = {
 	short_intro?: string;
@@ -306,26 +330,62 @@ export type WordPressCourse = {
 };
 
 export async function getCourses(fetcher: typeof fetch): Promise<WordPressCourse[]> {
-	const base = apiBase();
-	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await wordpressFetch(
-		base + '/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf',
+	const { data } = await wp<WordPressCourse[]>(
+		'/courses?per_page=100&_fields=id,slug,title,content,excerpt,acf',
 		fetcher
 	);
-	return (await response.json()) as WordPressCourse[];
+	return data;
 }
 
 export async function getCourse(slug: string, fetcher: typeof fetch): Promise<WordPressCourse> {
-	const base = apiBase();
-	if (!base) throw new Error('Set WORDPRESS_API_URL to your WordPress /wp-json/wp/v2 endpoint.');
-	const response = await wordpressFetch(
-		base +
-			'/courses?slug=' +
-			encodeURIComponent(slug) +
-			'&_fields=id,slug,title,content,excerpt,featured_media,acf',
+	const course = await wpBySlug<WordPressCourse>(
+		'courses',
+		slug,
+		'id,slug,title,content,excerpt,featured_media,acf',
+		'Course not found',
 		fetcher
 	);
-	const courses = (await response.json()) as WordPressCourse[];
-	if (!courses[0]) error(404, 'Course not found');
-	return { ...courses[0], image: await resolveImage(courses[0].featured_media, fetcher, 'large') };
+	return { ...course, image: await resolveImage(course.featured_media, fetcher, 'large') };
+}
+
+type SitemapEntry = { path: string; modified?: string };
+
+/** Every published item of a content type, following WordPress pagination. */
+async function listSlugs(type: string, fetcher: typeof fetch) {
+	const items: Array<{ slug: string; modified_gmt: string }> = [];
+	for (let page = 1; ; page++) {
+		const { data, response } = await wp<typeof items>(
+			`/${type}?per_page=100&page=${page}&_fields=slug,modified_gmt`,
+			fetcher
+		);
+		if (!Array.isArray(data)) break;
+		items.push(...data);
+		if (page >= Number(response.headers.get('x-wp-totalpages') || 1)) break;
+	}
+	return items;
+}
+
+export async function getSitemapEntries(fetcher: typeof fetch): Promise<SitemapEntry[]> {
+	if (!apiBase()) return [];
+	const toEntries = (type: string): Promise<SitemapEntry[]> =>
+		listSlugs(type, fetcher).then((items) =>
+			items.flatMap(({ slug, modified_gmt }) => {
+				const collection = collectionRoutes[type as keyof typeof collectionRoutes];
+				const path = collection
+					? collection.ignore.includes(slug)
+						? undefined
+						: `${collection.prefix}/${encodeURIComponent(slug)}`
+					: pageRoutes[slug];
+				return path ? [{ path, modified: modified_gmt }] : [];
+			})
+		);
+	const groups = await Promise.all(
+		['pages', ...Object.keys(collectionRoutes)].map((type) =>
+			toEntries(type).catch((cause) => {
+				console.error(`Sitemap: skipping ${type}`, cause);
+				return [];
+			})
+		)
+	);
+	return [...indexRoutes.map((path) => ({ path })), ...groups.flat()];
 }
